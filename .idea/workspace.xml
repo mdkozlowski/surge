@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoTestManager">
+    <enabled-run-configurations>
+      <run-configuration type="CargoCommandRunConfiguration" name="Test" />
+    </enabled-run-configurations>
+  </component>
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
+    <generated />
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="CargoProjects">
+    <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
+    <cargoProject FILE="$PROJECT_DIR$/engine/Cargo.toml" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="08d91b3a-614c-42d2-8040-075869def7aa" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/engine/src/tests.rs" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Rust File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MacroExpansionManager">
+    <option name="directoryName" value="ruvgruqx" />
+  </component>
+  <component name="ProjectId" id="1my8HbOQ3Zk8UHMUi0t0A5T4n8a" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="cf.first.check.clang-format" value="false" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="org.rust.cargo.project.model.PROJECT_DISCOVERY" value="true" />
+    <property name="org.rust.disableDetachedFileInspectionA:/rust/surge/engine/src/lib.rs" value="true" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+  </component>
+  <component name="RunManager" selected="Cargo.Run">
+    <configuration name="Run" type="CargoCommandRunConfiguration" factoryName="Cargo Command" nameIsGenerated="true">
+      <option name="command" value="run -p rpc_server" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <option name="channel" value="DEFAULT" />
+      <option name="allFeatures" value="false" />
+      <option name="emulateTerminal" value="false" />
+      <option name="backtrace" value="SHORT" />
+      <envs />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
+      <option name="command" value="test --package surge --lib tests" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <option name="channel" value="DEFAULT" />
+      <option name="allFeatures" value="false" />
+      <option name="emulateTerminal" value="false" />
+      <option name="backtrace" value="SHORT" />
+      <envs />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="build [rpc_server]" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="build --package rpc_server --bin rpc_server" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <option name="channel" value="DEFAULT" />
+      <option name="allFeatures" value="false" />
+      <option name="emulateTerminal" value="false" />
+      <option name="backtrace" value="SHORT" />
+      <envs />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Cargo.Run" />
+      <item itemvalue="Cargo.Test" />
+      <item itemvalue="Cargo.build [rpc_server]" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Cargo.build [rpc_server]" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="RustProjectSettings">
+    <option name="toolchainHomeDirectory" value="$USER_HOME$/.cargo/bin" />
+    <option name="version" value="2" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="08d91b3a-614c-42d2-8040-075869def7aa" name="Default Changelist" comment="" />
+      <created>1610454384002</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1610454384002</updated>
+      <workItem from="1610454385426" duration="110000" />
+      <workItem from="1610454513398" duration="23000" />
+      <workItem from="1610454542738" duration="1367000" />
+      <workItem from="1610561578597" duration="4914000" />
+      <workItem from="1610645896484" duration="7491000" />
+      <workItem from="1611168676983" duration="1050000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="872" y="341" key="#Plugins" timestamp="1611168660711">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="872" y="341" key="#Plugins/2560.313.1600.860/0.0.2560.1400@0.0.2560.1400" timestamp="1611168660711" />
+    <state x="734" y="355" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1611169119172">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="734" y="355" key="#com.intellij.execution.impl.EditConfigurationsDialog/2560.313.1600.860/0.0.2560.1400@0.0.2560.1400" timestamp="1611169119172" />
+    <state width="1601" height="804" key="GridCell.Tab.0.bottom" timestamp="1610455921954">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="1601" height="804" key="GridCell.Tab.0.bottom/2560.313.1600.860/0.0.2560.1400@0.0.2560.1400" timestamp="1610455921954" />
+    <state width="1601" height="804" key="GridCell.Tab.0.center" timestamp="1610455921953">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="1601" height="804" key="GridCell.Tab.0.center/2560.313.1600.860/0.0.2560.1400@0.0.2560.1400" timestamp="1610455921953" />
+    <state width="1601" height="804" key="GridCell.Tab.0.left" timestamp="1610455921953">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="1601" height="804" key="GridCell.Tab.0.left/2560.313.1600.860/0.0.2560.1400@0.0.2560.1400" timestamp="1610455921953" />
+    <state width="1601" height="804" key="GridCell.Tab.0.right" timestamp="1610455921954">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="1601" height="804" key="GridCell.Tab.0.right/2560.313.1600.860/0.0.2560.1400@0.0.2560.1400" timestamp="1610455921954" />
+    <state x="781" y="344" key="SettingsEditor" timestamp="1610454487418">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="781" y="344" key="SettingsEditor/2560.313.1600.860/0.0.2560.1400@0.0.2560.1400" timestamp="1610454487418" />
+    <state x="1184" y="0" width="1392" height="1386" key="dock-window-1" timestamp="1611166930644">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="1184" y="0" width="1392" height="1386" key="dock-window-1/2560.313.1600.860/0.0.2560.1400@0.0.2560.1400" timestamp="1611166930644" />
+  </component>
+</project>
