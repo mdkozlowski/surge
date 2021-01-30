@@ -1,19 +1,45 @@
+#[allow(dead_code)]
 pub mod engine {
 	use std::{collections::{HashMap, VecDeque}, convert::TryFrom};
 	use rand::Rng;
 	use rand::rngs::ThreadRng;
 	use rand::seq::SliceRandom;
-	use std::iter;
+	use std::{iter, ops};
+	use std::collections::HashSet;
+	
+	use ndarray::{Array, array, stack};
 
-	#[derive(Debug)]
+	#[derive(Eq, Hash, PartialEq, Debug, Clone, Copy)]
 	pub enum Direction {
 		Up,
 		Down,
 		Left,
 		Right,
-    }
+	}
+	
+	impl Direction {
+		fn as_pos(self: &Self) -> Position {
+			match self {
+				Direction::Up => Position::new(0,-1),
+				Direction::Down => Position::new(0,1),
+				Direction::Left => Position::new(-1,0),
+				Direction::Right => Position::new(1,0)
+			}
+		}
+	}
 
-	#[derive(Debug)]
+	impl ops::Add<Position> for Position {
+		type Output = Position;
+	
+		fn add(self, _rhs: Position) -> Position {
+			Position {
+				x: self.x + _rhs.x,
+				y: self.y + _rhs.y
+			}
+		}
+	}
+
+	#[derive(Eq, Hash, PartialEq, Debug, Clone, Copy)]
 	pub enum Action {
 		Move(Direction),
 		DoNothing
@@ -28,8 +54,8 @@ pub mod engine {
 	}
 
 	impl FruitType {
-		fn as_num(foo: FruitType) -> u8 {
-			foo as u8
+		fn as_num(foo: FruitType) -> i8 {
+			foo as i8
 		}
 		
 		fn random_fruit(rng: &mut ThreadRng) -> FruitType {
@@ -50,21 +76,21 @@ pub mod engine {
 		}
 	}
 
-	#[derive(Eq, Hash, PartialEq, Copy, Clone)]
+	#[derive(Eq, Hash, PartialEq, Copy, Clone, Debug)]
 	pub struct Position {
-		x: u8,
-		y: u8
+		x: i8,
+		y: i8
 	}
 
 	impl Position {
-		pub fn random_position(max: &u8, rng: &mut rand::rngs::ThreadRng) -> Position {
+		pub fn random_position(max: &i8, rng: &mut rand::rngs::ThreadRng) -> Position {
 			Position {
-				x: rng.gen_range(0..*max) as u8,
-				y: rng.gen_range(0..*max) as u8,
+				x: rng.gen_range(0..*max) as i8,
+				y: rng.gen_range(0..*max) as i8,
 			}
 		}
 
-		pub fn new(x: u8, y: u8) -> Self {
+		pub fn new(x: i8, y: i8) -> Self {
 			Position {
 				x,
 				y
@@ -72,37 +98,37 @@ pub mod engine {
 		}
 	}
 
+	#[derive(Debug)]
 	pub struct Player {
-		fruit_counts: HashMap<FruitType, u8>,
+		fruit_counts: HashMap<FruitType, i8>,
 		position: Position,
 
 	}
 
+	#[derive(Debug)]
 	pub struct Engine {
-		match_history: Vec<SAR>,
-		current_state: GameState
+		game_history: Vec<SAR>,
+		pub current_state: GameState
 	}
 
 	pub struct EngineConfig {
-		board_size: u8,
-		fruit_density: f32
+		pub board_size: i8,
+		pub fruit_density: f32
 	}
 
+	#[derive(Debug)]
 	pub struct BoardState {
-		board_fruit: HashMap<Position, Option<FruitType>>
+		board_fruit: HashMap<Position, Option<FruitType>>,
+		board_size: i8
 	}
-		
-		pub impl BoardState {
-				pub fn read_game() {
-					
-				}
-		}
-	
+	#[derive(Debug)]
 	pub struct GameState {
 		players: Vec<Player>,
-		board_state: BoardState
+		board_state: BoardState,
+		round: u32
 	}
 	
+	#[derive(Debug)]
 	pub struct SAR {
 		gamestate: GameState,
 		actions: [Action; 2],
@@ -120,18 +146,83 @@ pub mod engine {
 	}
 
 	impl Engine {
+
 		pub fn new(conf: EngineConfig) -> Engine {
 
 			let (board_state, players) = Engine::initialise_board(conf);
 
 			Engine {
-				match_history: vec![],
+				game_history: vec![],
 				current_state: GameState {
 					players,
-					board_state
+                    board_state,
+                    round: 0
+				}
+            }
+        }
+
+        pub fn get_valid_moves(self: &Self) -> Vec<HashSet<Action>> {
+			let mut valid_moveset: Vec<HashSet<Action>> = vec![];
+			let outside_bounds = |board_size, val| {
+				val >= board_size || val < 0
+			};
+
+
+			let players = &self.current_state.players;
+            for player in players {
+				let mut valid_moves: HashSet<Action> = HashSet::new();
+				valid_moves.insert(Action::DoNothing);
+
+                for direction in vec![Direction::Up, Direction::Down, Direction::Left, Direction::Right] {
+					let target_pos = direction.as_pos() + player.position;
+					if !outside_bounds(self.current_state.board_state.board_size, target_pos.x) 
+						&& !outside_bounds(self.current_state.board_state.board_size, target_pos.y) {
+						valid_moves.insert(Action::Move(direction));
+					}
+				}
+				valid_moveset.push(valid_moves);
+			}
+			valid_moveset
+		}
+		
+		pub fn print_state(self: &Self) {
+			// let map = array![];
+			let mut map: ndarray::ArrayBase<ndarray::OwnedRepr<std::option::Option<FruitType>>, ndarray::Dim<[usize; 2]>> 
+						= Array::from_elem((10,10), None);
+			for (pos, value) in self.current_state.board_state.board_fruit.iter() {
+				map[[pos.x as usize, pos.y as usize]] = *value;
+				// match value {
+				// 	None => {},
+				// 	Some(f) => match f {
+				// 		FruitType::Apple => 
+				// 	}
+				// }
+			}
+
+			for x in 0..10 {
+				for y in 0..10 {
+					let val = map[[x,y]];
+					match val {
+						None => print!("#"),
+						Some(fruit) => match fruit {
+							FruitType::Apple => print!("A"),
+							FruitType::Banana => print!("B"),
+							FruitType::Orange => print!("C")
+						}
+					}
+					if y == 9 {
+						print!("\r\n");
+					}
 				}
 			}
-		}
+
+			println!("{:?}", map);
+
+        }
+        
+        pub fn apply_action(actions: (Action, Action)) {
+            
+        }
 
 		pub fn initialise_board(conf: EngineConfig) -> (BoardState, Vec<Player>) {
 			let mut rng = rand::thread_rng();
@@ -144,12 +235,15 @@ pub mod engine {
 				}
 			}
 			board_positions.shuffle(&mut rng);
-			let board_positions_queue = VecDeque::from(board_positions.clone());
+			let mut board_positions_queue = VecDeque::from(board_positions.clone());
+
+			let total_fruit = conf.fruit_density * (conf.board_size.pow(2) as f32);
+			let per_fruit = (total_fruit / 3.0f32).ceil() as usize;
 
 			let mut fruit_values: Vec<FruitType> = 
-				iter::repeat(FruitType::Apple).take(5)
-						.chain(iter::repeat(FruitType::Banana).take(5))
-						.chain(iter::repeat(FruitType::Orange).take(5)).collect();
+				iter::repeat(FruitType::Apple).take(per_fruit)
+						.chain(iter::repeat(FruitType::Banana).take(per_fruit))
+						.chain(iter::repeat(FruitType::Orange).take(per_fruit)).collect();
 			fruit_values.shuffle(&mut rng);
 
 			for (fruit, pos) in fruit_values.iter().zip(board_positions.iter()) {
@@ -158,9 +252,9 @@ pub mod engine {
 			}
 
 			let mut players: Vec<Player> = vec![];
-			for i in 0..2 {
+			for _ in 0..2 {
 				
-				let fruit_counts = HashMap::new();
+				let mut fruit_counts = HashMap::new();
 				fruit_counts.insert(FruitType::Apple, 0);
 				fruit_counts.insert(FruitType::Banana, 0);
 				fruit_counts.insert(FruitType::Orange, 0);
@@ -180,7 +274,8 @@ pub mod engine {
 			}
 
 			let board_state = BoardState {
-				board_fruit
+				board_fruit,
+				board_size: conf.board_size
 			};
 
 			(board_state, players)

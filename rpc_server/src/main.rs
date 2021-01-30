@@ -1,7 +1,9 @@
-use engine;
-use engine::engine::FruitType;
+use engine::engine::*;
 
 fn main() {
-    let two = FruitType::Apple;
-    println!("Hello, world! {:?}", two);
+    let engine = Engine::new(EngineConfig {
+        board_size: 10,
+        fruit_density: 0.25f32,
+    });
+    engine.print_state();
 }
