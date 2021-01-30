@@ -118,7 +118,7 @@ pub mod engine {
 
 	#[derive(Debug)]
 	pub struct BoardState {
-		board_fruit: HashMap<Position, Option<FruitType>>,
+		board_fruit: ndarray::ArrayBase<ndarray::OwnedRepr<std::option::Option<FruitType>>, ndarray::Dim<[usize; 2]>>,
 		board_size: i8
 	}
 	#[derive(Debug)]
@@ -186,22 +186,10 @@ pub mod engine {
 		}
 		
 		pub fn print_state(self: &Self) {
-			// let map = array![];
-			let mut map: ndarray::ArrayBase<ndarray::OwnedRepr<std::option::Option<FruitType>>, ndarray::Dim<[usize; 2]>> 
-						= Array::from_elem((10,10), None);
-			for (pos, value) in self.current_state.board_state.board_fruit.iter() {
-				map[[pos.x as usize, pos.y as usize]] = *value;
-				// match value {
-				// 	None => {},
-				// 	Some(f) => match f {
-				// 		FruitType::Apple => 
-				// 	}
-				// }
-			}
-
+			let board_state = &self.current_state.board_state.board_fruit;
 			for x in 0..10 {
 				for y in 0..10 {
-					let val = map[[x,y]];
+					let val = board_state[[x,y]];
 					match val {
 						None => print!("#"),
 						Some(fruit) => match fruit {
@@ -216,7 +204,7 @@ pub mod engine {
 				}
 			}
 
-			println!("{:?}", map);
+			println!("{:?}", board_state);
 
         }
         
@@ -226,7 +214,8 @@ pub mod engine {
 
 		pub fn initialise_board(conf: EngineConfig) -> (BoardState, Vec<Player>) {
 			let mut rng = rand::thread_rng();
-			let mut board_fruit : HashMap<Position, Option<FruitType>> = HashMap::new();
+			let mut board_fruit : ndarray::ArrayBase<ndarray::OwnedRepr<std::option::Option<FruitType>>, ndarray::Dim<[usize; 2]>> 
+					= Array::from_elem((conf.board_size as usize,conf.board_size as usize), None);
 
 			let mut board_positions: Vec<Position> = vec![];
 			for x in 0..conf.board_size {
@@ -247,7 +236,7 @@ pub mod engine {
 			fruit_values.shuffle(&mut rng);
 
 			for (fruit, pos) in fruit_values.iter().zip(board_positions.iter()) {
-				board_fruit.insert(*pos, Some(*fruit));
+				board_fruit[[pos.x as usize, pos.y as usize]] = Some(*fruit);
 				board_positions_queue.pop_front();
 			}
 
@@ -265,12 +254,6 @@ pub mod engine {
 					fruit_counts,
 					position
 				});
-
-				board_fruit.insert(position, None);
-			}
-
-			for position in board_positions_queue.iter() {
-				board_fruit.insert(*position, None);
 			}
 
 			let board_state = BoardState {
