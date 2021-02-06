@@ -28,7 +28,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="08d91b3a-614c-42d2-8040-075869def7aa" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/engine/src/tests.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/lib.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/state.rs" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/state.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/engine/src/tests.rs" beforeDir="false" afterPath="$PROJECT_DIR$/engine/src/tests.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rpc_server/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/rpc_server/src/main.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,12 +67,87 @@
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="org.rust.cargo.project.model.PROJECT_DISCOVERY" value="true" />
     <property name="org.rust.disableDetachedFileInspectionA:/rust/surge/engine/src/lib.rs" value="true" />
-    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Color Scheme Font" />
   </component>
-  <component name="RunManager" selected="Cargo.Run">
+  <component name="RunManager" selected="Cargo.Test tests::tests">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Run rpc_server" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="run --package rpc_server --bin rpc_server" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$/engine" />
+      <option name="channel" value="DEFAULT" />
+      <option name="allFeatures" value="false" />
+      <option name="emulateTerminal" value="false" />
+      <option name="backtrace" value="SHORT" />
+      <envs />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Run" type="CargoCommandRunConfiguration" factoryName="Cargo Command" nameIsGenerated="true">
       <option name="command" value="run -p rpc_server" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <option name="channel" value="DEFAULT" />
+      <option name="allFeatures" value="false" />
+      <option name="emulateTerminal" value="false" />
+      <option name="backtrace" value="SHORT" />
+      <envs />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test tests::tests" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="test --package engine --lib tests::tests" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$/engine" />
+      <option name="channel" value="DEFAULT" />
+      <option name="allFeatures" value="false" />
+      <option name="emulateTerminal" value="false" />
+      <option name="backtrace" value="SHORT" />
+      <envs />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test tests::tests::move_normal" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="test --package engine --lib tests::tests::move_normal -- --exact" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$/engine" />
+      <option name="channel" value="DEFAULT" />
+      <option name="allFeatures" value="false" />
+      <option name="emulateTerminal" value="false" />
+      <option name="backtrace" value="SHORT" />
+      <envs />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test tests::tests::move_pickup_fruit" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="test --package engine --lib tests::tests::move_pickup_fruit -- --exact" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$/engine" />
+      <option name="channel" value="DEFAULT" />
+      <option name="allFeatures" value="false" />
+      <option name="emulateTerminal" value="false" />
+      <option name="backtrace" value="SHORT" />
+      <envs />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test tests::tests::move_pickup_fruit_same_pos" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="test --package engine --lib tests::tests::move_pickup_fruit_same_pos -- --exact" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$/engine" />
       <option name="channel" value="DEFAULT" />
       <option name="allFeatures" value="false" />
       <option name="emulateTerminal" value="false" />
@@ -94,33 +173,22 @@
         <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
       </method>
     </configuration>
-    <configuration name="build [rpc_server]" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
-      <option name="command" value="build --package rpc_server --bin rpc_server" />
-      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
-      <option name="channel" value="DEFAULT" />
-      <option name="allFeatures" value="false" />
-      <option name="emulateTerminal" value="false" />
-      <option name="backtrace" value="SHORT" />
-      <envs />
-      <option name="isRedirectInput" value="false" />
-      <option name="redirectInputPath" value="" />
-      <method v="2">
-        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
     <list>
       <item itemvalue="Cargo.Run" />
       <item itemvalue="Cargo.Test" />
-      <item itemvalue="Cargo.build [rpc_server]" />
+      <item itemvalue="Cargo.Run rpc_server" />
+      <item itemvalue="Cargo.Test tests::tests" />
+      <item itemvalue="Cargo.Test tests::tests::move_normal" />
+      <item itemvalue="Cargo.Test tests::tests::move_pickup_fruit" />
+      <item itemvalue="Cargo.Test tests::tests::move_pickup_fruit_same_pos" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Cargo.build [rpc_server]" />
+        <item itemvalue="Cargo.Test tests::tests" />
+        <item itemvalue="Cargo.Test tests::tests::move_pickup_fruit" />
+        <item itemvalue="Cargo.Test tests::tests::move_pickup_fruit_same_pos" />
+        <item itemvalue="Cargo.Test tests::tests::move_normal" />
+        <item itemvalue="Cargo.Run rpc_server" />
       </list>
     </recent_temporary>
   </component>
@@ -142,6 +210,9 @@
       <workItem from="1610561578597" duration="4914000" />
       <workItem from="1610645896484" duration="7491000" />
       <workItem from="1611168676983" duration="1050000" />
+      <workItem from="1612023260110" duration="3888000" />
+      <workItem from="1612532657659" duration="12602000" />
+      <workItem from="1612628942353" duration="3878000" />
     </task>
     <servers />
   </component>
@@ -169,29 +240,49 @@
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state x="734" y="355" key="#com.intellij.execution.impl.EditConfigurationsDialog/2560.313.1600.860/0.0.2560.1400@0.0.2560.1400" timestamp="1611169119172" />
-    <state width="1601" height="804" key="GridCell.Tab.0.bottom" timestamp="1610455921954">
+    <state x="92" y="92" width="2376" height="1216" key="#com.intellij.execution.junit2.states.ComparisonFailureState$DiffDialog" timestamp="1612613484008">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="1601" height="804" key="GridCell.Tab.0.bottom/2560.313.1600.860/0.0.2560.1400@0.0.2560.1400" timestamp="1610455921954" />
-    <state width="1601" height="804" key="GridCell.Tab.0.center" timestamp="1610455921953">
+    <state x="92" y="92" width="2376" height="1216" key="#com.intellij.execution.junit2.states.ComparisonFailureState$DiffDialog/2560.312.1600.860/0.0.2560.1400@0.0.2560.1400" timestamp="1612613484008" />
+    <state x="1035" y="380" key="#xdebugger.evaluate" timestamp="1612024081100">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="1601" height="804" key="GridCell.Tab.0.center/2560.313.1600.860/0.0.2560.1400@0.0.2560.1400" timestamp="1610455921953" />
-    <state width="1601" height="804" key="GridCell.Tab.0.left" timestamp="1610455921953">
+    <state x="1035" y="380" key="#xdebugger.evaluate/2560.313.1600.860/0.0.2560.1400@0.0.2560.1400" timestamp="1612024081100" />
+    <state x="1060" y="455" key="FileChooserDialogImpl" timestamp="1612632467791">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="1601" height="804" key="GridCell.Tab.0.left/2560.313.1600.860/0.0.2560.1400@0.0.2560.1400" timestamp="1610455921953" />
-    <state width="1601" height="804" key="GridCell.Tab.0.right" timestamp="1610455921954">
+    <state x="1060" y="455" key="FileChooserDialogImpl/2560.312.1600.860/0.0.2560.1400@0.0.2560.1400" timestamp="1612632467791" />
+    <state width="918" height="1271" key="GridCell.Tab.0.bottom" timestamp="1612632128727">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="1601" height="804" key="GridCell.Tab.0.right/2560.313.1600.860/0.0.2560.1400@0.0.2560.1400" timestamp="1610455921954" />
-    <state x="781" y="344" key="SettingsEditor" timestamp="1610454487418">
+    <state width="918" height="1271" key="GridCell.Tab.0.bottom/2560.312.1600.860/0.0.2560.1400@0.0.2560.1400" timestamp="1612632128727" />
+    <state width="1601" height="804" key="GridCell.Tab.0.bottom/2560.313.1600.860/0.0.2560.1400@0.0.2560.1400" timestamp="1612027180444" />
+    <state width="918" height="1271" key="GridCell.Tab.0.center" timestamp="1612632128726">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state x="781" y="344" key="SettingsEditor/2560.313.1600.860/0.0.2560.1400@0.0.2560.1400" timestamp="1610454487418" />
+    <state width="918" height="1271" key="GridCell.Tab.0.center/2560.312.1600.860/0.0.2560.1400@0.0.2560.1400" timestamp="1612632128726" />
+    <state width="1601" height="804" key="GridCell.Tab.0.center/2560.313.1600.860/0.0.2560.1400@0.0.2560.1400" timestamp="1612027180444" />
+    <state width="918" height="1271" key="GridCell.Tab.0.left" timestamp="1612632128726">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="918" height="1271" key="GridCell.Tab.0.left/2560.312.1600.860/0.0.2560.1400@0.0.2560.1400" timestamp="1612632128726" />
+    <state width="1601" height="804" key="GridCell.Tab.0.left/2560.313.1600.860/0.0.2560.1400@0.0.2560.1400" timestamp="1612027180444" />
+    <state width="918" height="1271" key="GridCell.Tab.0.right" timestamp="1612632128727">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="918" height="1271" key="GridCell.Tab.0.right/2560.312.1600.860/0.0.2560.1400@0.0.2560.1400" timestamp="1612632128727" />
+    <state width="1601" height="804" key="GridCell.Tab.0.right/2560.313.1600.860/0.0.2560.1400@0.0.2560.1400" timestamp="1612027180444" />
+    <state x="781" y="344" key="SettingsEditor" timestamp="1612024251334">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="781" y="344" key="SettingsEditor/2560.313.1600.860/0.0.2560.1400@0.0.2560.1400" timestamp="1612024251334" />
     <state x="1184" y="0" width="1392" height="1386" key="dock-window-1" timestamp="1611166930644">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state x="1184" y="0" width="1392" height="1386" key="dock-window-1/2560.313.1600.860/0.0.2560.1400@0.0.2560.1400" timestamp="1611166930644" />
+    <state x="943" y="315" width="672" height="678" key="search.everywhere.popup" timestamp="1612024486239">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="943" y="315" width="672" height="678" key="search.everywhere.popup/2560.313.1600.860/0.0.2560.1400@0.0.2560.1400" timestamp="1612024486239" />
   </component>
 </project>
