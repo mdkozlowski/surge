@@ -11,6 +11,7 @@ pub mod engine {
 
 	use ndarray::{Array, array, stack};
 	use rand::{Rng, SeedableRng};
+	use std::io::SeekFrom::End;
 
 	#[derive(Eq, Hash, PartialEq, Debug, Clone, Copy)]
 	pub enum Direction {
@@ -122,14 +123,14 @@ pub mod engine {
 
 	#[derive(Debug)]
 	pub struct BoardState {
-		board_fruit: ndarray::ArrayBase<ndarray::OwnedRepr<std::option::Option<FruitType>>, ndarray::Dim<[usize; 2]>>,
-		board_size: i8,
+		fruit_map: ndarray::ArrayBase<ndarray::OwnedRepr<std::option::Option<FruitType>>, ndarray::Dim<[usize; 2]>>,
+		size: i8,
 	}
 
 	#[derive(Debug)]
 	pub struct GameState {
 		pub players: Vec<Player>,
-		board_state: BoardState,
+		pub board: BoardState,
 		round: u32,
 	}
 
@@ -151,9 +152,34 @@ pub mod engine {
 		}
 	}
 
+	impl BoardState {
+		pub fn set_fruit(&mut self, x: usize, y: usize, fruit: FruitType) {
+			self.fruit_map[[x as usize, y as usize]] = Some(fruit);
+		}
+
+		pub fn get_fruit(&mut self, x: usize, y: usize) -> &Option<FruitType> {
+			&self.fruit_map[[x as usize, y as usize]]
+		}
+	}
+
 	impl GameState {
 		pub fn insert_player(&mut self, p: Player) {
 			self.players.push(p);
+		}
+	}
+
+	impl Player {
+		pub fn move_player(&mut self, new_pos: Position) {
+			self.position = new_pos;
+		}
+
+		pub fn increment_fruit(&mut self, fruit: FruitType) {
+			let mut fruit_ref = self.fruit_counts.get_mut(&fruit).unwrap();
+			*fruit_ref += 1;
+		}
+
+		pub fn get_fruit_count(&self, fruit: FruitType) -> &i8 {
+			self.fruit_counts.get(&fruit).unwrap()
 		}
 	}
 
@@ -165,7 +191,7 @@ pub mod engine {
 				game_history: vec![],
 				current_state: GameState {
 					players,
-					board_state,
+					board: board_state,
 					round: 0,
 				},
 			}
@@ -185,8 +211,8 @@ pub mod engine {
 
 				for direction in vec![Direction::Up, Direction::Down, Direction::Left, Direction::Right] {
 					let target_pos = direction.as_pos() + player.position;
-					if !outside_bounds(self.current_state.board_state.board_size, target_pos.x)
-						&& !outside_bounds(self.current_state.board_state.board_size, target_pos.y) {
+					if !outside_bounds(self.current_state.board.size, target_pos.x)
+						&& !outside_bounds(self.current_state.board.size, target_pos.y) {
 						valid_moves.insert(Action::Move(direction));
 					}
 				}
@@ -196,10 +222,10 @@ pub mod engine {
 		}
 
 		pub fn print_state(self: &Self) {
-			let board_state = &self.current_state.board_state.board_fruit;
+			let board_state = &self.current_state.board.fruit_map;
 			println!("Round {}:", self.current_state.round);
-			for y in 0..self.current_state.board_state.board_size {
-				for x in 0..self.current_state.board_state.board_size {
+			for y in 0..self.current_state.board.size {
+				for x in 0..self.current_state.board.size {
 					let mut print_char = "#";
 					let players = &self.current_state.players;
 					let val = board_state[[x as usize, y as usize]];
@@ -222,7 +248,7 @@ pub mod engine {
 						}
 					}
 					print!("{}", print_char);
-					if x == self.current_state.board_state.board_size - 1 {
+					if x == self.current_state.board.size - 1 {
 						print!("\r\n");
 					}
 				}
@@ -237,7 +263,7 @@ pub mod engine {
 		}
 
 		fn outside_bounds(board_size: i8, pos: &Position) -> bool {
-			return (pos.x < 0 || pos.x >= board_size) || (pos.y < 0 || pos.y >= board_size)
+			return (pos.x < 0 || pos.x >= board_size) || (pos.y < 0 || pos.y >= board_size);
 		}
 
 		pub fn apply_actions(&mut self, actions: (Action, Action)) {
@@ -248,19 +274,30 @@ pub mod engine {
 				return;
 			}
 
-			if Engine::outside_bounds(self.current_state.board_state.board_size, &p1_target) {
+			if Engine::outside_bounds(self.current_state.board.size, &p1_target) {
 				p1_target = self.current_state.players.get(0).unwrap().position;
 			}
 
-			if Engine::outside_bounds(self.current_state.board_state.board_size, &p2_target) {
+			if Engine::outside_bounds(self.current_state.board.size, &p2_target) {
 				p2_target = self.current_state.players.get(1).unwrap().position;
 			}
 
-			let player1_ref = self.current_state.players.get_mut(0).unwrap();
-			player1_ref.position = p1_target;
+			let mut players_ref = &mut self.current_state.players;
+			let player1_ref = players_ref.get_mut(0).unwrap();
+			player1_ref.move_player(p1_target);
+			Engine::pickup_fruit(player1_ref, &mut self.current_state.board);
 
-			let player2_ref = self.current_state.players.get_mut(1).unwrap();
-			player2_ref.position = p2_target;
+			let player2_ref = players_ref.get_mut(1).unwrap();
+			player2_ref.move_player(p2_target);
+			Engine::pickup_fruit(player2_ref, &mut self.current_state.board);
+		}
+
+		fn pickup_fruit(player: &mut Player, board: &mut BoardState) {
+			let player_pos = &player.position;
+			if let Some(fruit) = board.fruit_map[[player_pos.x as usize, player_pos.y as usize]] {
+				board.fruit_map[[player_pos.x as usize, player_pos.y as usize]] = None;
+				player.increment_fruit(fruit);
+			}
 		}
 
 		pub fn resolve_move(action: Action, pos: &Position) -> Position {
@@ -271,7 +308,6 @@ pub mod engine {
 				}
 			}
 		}
-
 
 		pub fn initialise_board(conf: EngineConfig) -> (BoardState, Vec<Player>) {
 			let mut rng: StdRng = SeedableRng::seed_from_u64(1234);
@@ -323,8 +359,8 @@ pub mod engine {
 			}
 
 			let board_state = BoardState {
-				board_fruit,
-				board_size: conf.board_size,
+				fruit_map: board_fruit,
+				size: conf.board_size,
 			};
 
 			(board_state, players)

@@ -49,7 +49,7 @@ mod tests {
 	}
 
 	#[test]
-	fn move_same_place() {
+	fn move_same_pos() {
 		let mut engine = blank_engine();
 		engine.current_state.insert_player(blank_player(Position::new(4, 3)));
 		engine.current_state.insert_player(blank_player(Position::new(2, 3)));
@@ -58,5 +58,38 @@ mod tests {
 
 		assert_eq!(engine.current_state.players.get(0).unwrap().position, Position::new(4, 3));
 		assert_eq!(engine.current_state.players.get(1).unwrap().position, Position::new(2, 3));
+	}
+
+	#[test]
+	fn move_pickup_fruit() {
+		let mut engine = blank_engine();
+		engine.current_state.insert_player(blank_player(Position::new(4, 3)));
+		engine.current_state.insert_player(blank_player(Position::new(2, 3)));
+
+		engine.current_state.board.set_fruit(3,3, FruitType::Orange);
+		assert_eq!(*engine.current_state.board.get_fruit(3,3), Some(FruitType::Orange));
+		assert_eq!(*engine.current_state.players.get(0).unwrap().get_fruit_count(FruitType::Orange), 0);
+
+		engine.apply_actions((Action::Move(Direction::Left),
+							  Action::DoNothing));
+		assert_eq!(*engine.current_state.board.get_fruit(3,3), None);
+		assert_eq!(*engine.current_state.players.get(0).unwrap().get_fruit_count(FruitType::Orange), 1);
+	}
+
+	#[test]
+	fn move_pickup_fruit_same_pos() {
+		let mut engine = blank_engine();
+		engine.current_state.insert_player(blank_player(Position::new(4, 3)));
+		engine.current_state.insert_player(blank_player(Position::new(2, 3)));
+
+		engine.current_state.board.set_fruit(3,3, FruitType::Orange);
+		assert_eq!(*engine.current_state.board.get_fruit(3,3), Some(FruitType::Orange));
+		assert_eq!(*engine.current_state.players.get(0).unwrap().get_fruit_count(FruitType::Orange), 0);
+
+		engine.apply_actions((Action::Move(Direction::Left),
+							  Action::Move(Direction::Right)));
+		assert_eq!(*engine.current_state.board.get_fruit(3,3), Some(FruitType::Orange));
+		assert_eq!(*engine.current_state.players.get(0).unwrap().get_fruit_count(FruitType::Orange), 0);
+		assert_eq!(*engine.current_state.players.get(0).unwrap().get_fruit_count(FruitType::Orange), 0);
 	}
 }
