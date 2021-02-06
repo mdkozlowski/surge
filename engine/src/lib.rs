@@ -1,3 +1,5 @@
+mod tests;
+
 #[allow(dead_code)]
 pub mod engine {
 	use std::{collections::{HashMap, VecDeque}, convert::TryFrom};
@@ -79,8 +81,8 @@ pub mod engine {
 
 	#[derive(Eq, Hash, PartialEq, Copy, Clone, Debug)]
 	pub struct Position {
-		x: i8,
-		y: i8,
+		pub(crate) x: i8,
+		pub(crate) y: i8,
 	}
 
 	impl Position {
@@ -101,8 +103,8 @@ pub mod engine {
 
 	#[derive(Debug)]
 	pub struct Player {
-		fruit_counts: HashMap<FruitType, i8>,
-		position: Position,
+		pub(crate) fruit_counts: HashMap<FruitType, i8>,
+		pub(crate) position: Position,
 
 	}
 
@@ -115,6 +117,7 @@ pub mod engine {
 	pub struct EngineConfig {
 		pub board_size: i8,
 		pub fruit_density: f32,
+		pub populate_board: bool,
 	}
 
 	#[derive(Debug)]
@@ -125,7 +128,7 @@ pub mod engine {
 
 	#[derive(Debug)]
 	pub struct GameState {
-		players: Vec<Player>,
+		pub players: Vec<Player>,
 		board_state: BoardState,
 		round: u32,
 	}
@@ -141,9 +144,16 @@ pub mod engine {
 	impl EngineConfig {
 		pub fn default() -> EngineConfig {
 			EngineConfig {
-				board_size: 8,
+				board_size: 7,
 				fruit_density: 0.3_f32,
+				populate_board: true,
 			}
+		}
+	}
+
+	impl GameState {
+		pub fn insert_player(&mut self, p: Player) {
+			self.players.push(p);
 		}
 	}
 
@@ -186,13 +196,13 @@ pub mod engine {
 		}
 
 		pub fn print_state(self: &Self) {
-			println!("{:?}", self.current_state.players);
 			let board_state = &self.current_state.board_state.board_fruit;
-			for y in 0..10 {
-				for x in 0..10 {
+			println!("Round {}:", self.current_state.round);
+			for y in 0..self.current_state.board_state.board_size {
+				for x in 0..self.current_state.board_state.board_size {
 					let mut print_char = "#";
 					let players = &self.current_state.players;
-					let val = board_state[[x, y]];
+					let val = board_state[[x as usize, y as usize]];
 					match val {
 						None => {
 							for (idx, player) in players.iter().enumerate() {
@@ -212,17 +222,59 @@ pub mod engine {
 						}
 					}
 					print!("{}", print_char);
-					if x == 9 {
+					if x == self.current_state.board_state.board_size - 1 {
 						print!("\r\n");
 					}
 				}
 			}
+			for (idx, player) in self.current_state.players.iter().enumerate() {
+				println!("Player {} @ <{},{}>: {}|{}|{}", idx, player.position.x, player.position.y,
+						 player.fruit_counts.get(&FruitType::Apple).unwrap(),
+						 player.fruit_counts.get(&FruitType::Banana).unwrap(),
+						 player.fruit_counts.get(&FruitType::Orange).unwrap())
+			}
+			println!("===================")
 		}
 
-		pub fn apply_action(actions: (Action, Action)) {}
+		fn outside_bounds(board_size: i8, pos: &Position) -> bool {
+			return (pos.x < 0 || pos.x >= board_size) || (pos.y < 0 || pos.y >= board_size)
+		}
+
+		pub fn apply_actions(&mut self, actions: (Action, Action)) {
+			let mut p1_target = Engine::resolve_move(actions.0, &self.current_state.players.get(0).unwrap().position);
+			let mut p2_target = Engine::resolve_move(actions.1, &self.current_state.players.get(1).unwrap().position);
+
+			if &p1_target == &p2_target {
+				return;
+			}
+
+			if Engine::outside_bounds(self.current_state.board_state.board_size, &p1_target) {
+				p1_target = self.current_state.players.get(0).unwrap().position;
+			}
+
+			if Engine::outside_bounds(self.current_state.board_state.board_size, &p2_target) {
+				p2_target = self.current_state.players.get(1).unwrap().position;
+			}
+
+			let player1_ref = self.current_state.players.get_mut(0).unwrap();
+			player1_ref.position = p1_target;
+
+			let player2_ref = self.current_state.players.get_mut(1).unwrap();
+			player2_ref.position = p2_target;
+		}
+
+		pub fn resolve_move(action: Action, pos: &Position) -> Position {
+			match action {
+				Action::DoNothing => *pos,
+				Action::Move(dir) => {
+					dir.as_pos() + *pos
+				}
+			}
+		}
+
 
 		pub fn initialise_board(conf: EngineConfig) -> (BoardState, Vec<Player>) {
-			let mut rng: StdRng = SeedableRng::seed_from_u64(123);
+			let mut rng: StdRng = SeedableRng::seed_from_u64(1234);
 
 			let mut board_fruit: ndarray::ArrayBase<ndarray::OwnedRepr<std::option::Option<FruitType>>, ndarray::Dim<[usize; 2]>>
 				= Array::from_elem((conf.board_size as usize, conf.board_size as usize), None);
@@ -236,33 +288,38 @@ pub mod engine {
 			board_positions.shuffle(&mut rng);
 			let mut board_positions_queue = VecDeque::from(board_positions.clone());
 
-			let total_fruit = conf.fruit_density * (conf.board_size.pow(2) as f32);
-			let n_fruit = (total_fruit / 3.0f32).ceil() as usize;
-
-			let mut fruit_values: Vec<FruitType> =
-				iter::repeat(FruitType::Apple).take(n_fruit)
-					.chain(iter::repeat(FruitType::Banana).take(n_fruit))
-					.chain(iter::repeat(FruitType::Orange).take(n_fruit)).collect();
-			fruit_values.shuffle(&mut rng);
-
-			for (fruit, pos) in fruit_values.iter().zip(board_positions.iter()) {
-				board_fruit[[pos.x as usize, pos.y as usize]] = Some(*fruit);
-				board_positions_queue.pop_front();
-			}
-
 			let mut players: Vec<Player> = vec![];
-			for _ in 0..2 {
-				let mut fruit_counts = HashMap::new();
-				fruit_counts.insert(FruitType::Apple, 0);
-				fruit_counts.insert(FruitType::Banana, 0);
-				fruit_counts.insert(FruitType::Orange, 0);
+			if conf.populate_board {
+				let total_fruit = conf.fruit_density * (conf.board_size.pow(2) as f32);
+				let mut n_fruit = (total_fruit / 3.0f32).ceil() as usize;
+				if n_fruit % 2 == 0 {
+					n_fruit = n_fruit + 1;
+				}
 
-				let position = board_positions_queue.pop_front().unwrap();
+				let mut fruit_values: Vec<FruitType> =
+					iter::repeat(FruitType::Apple).take(n_fruit)
+						.chain(iter::repeat(FruitType::Banana).take(n_fruit))
+						.chain(iter::repeat(FruitType::Orange).take(n_fruit)).collect();
+				fruit_values.shuffle(&mut rng);
 
-				players.push(Player {
-					fruit_counts,
-					position,
-				});
+				for (fruit, pos) in fruit_values.iter().zip(board_positions.iter()) {
+					board_fruit[[pos.x as usize, pos.y as usize]] = Some(*fruit);
+					board_positions_queue.pop_front();
+				}
+
+				for _ in 0..2 {
+					let mut fruit_counts = HashMap::new();
+					fruit_counts.insert(FruitType::Apple, 0);
+					fruit_counts.insert(FruitType::Banana, 0);
+					fruit_counts.insert(FruitType::Orange, 0);
+
+					let position = board_positions_queue.pop_front().unwrap();
+
+					players.push(Player {
+						fruit_counts,
+						position,
+					});
+				}
 			}
 
 			let board_state = BoardState {
