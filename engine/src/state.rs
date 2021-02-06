@@ -1,16 +1,10 @@
 #![allow(dead_code)]
 
-use std::{collections::{HashMap, VecDeque}, convert::TryFrom};
-use std::{iter, ops};
-use std::collections::HashSet;
-use std::io::SeekFrom::End;
-use std::iter::Enumerate;
+use std::{collections::{HashMap}, convert::TryFrom};
+use std::{ops};
 
-use ndarray::{Array};
-use rand::{Rng, SeedableRng};
-use rand::distributions::Open01;
-use rand::rngs::{StdRng, ThreadRng};
-use rand::seq::SliceRandom;
+use rand::{Rng};
+use rand::rngs::{ThreadRng};
 
 #[derive(Eq, Hash, PartialEq, Debug, Clone, Copy)]
 pub enum Direction {

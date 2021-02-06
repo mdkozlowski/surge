@@ -1,19 +1,18 @@
+#[allow(dead_code)]
 mod tests;
 
+#[allow(dead_code)]
 pub mod state;
 
 #[allow(dead_code)]
 pub mod engine {
-	use std::{collections::{HashMap, VecDeque}, convert::TryFrom};
+	use std::{collections::{HashMap, VecDeque}};
 	use std::{iter};
 	use std::collections::HashSet;
-	use std::io::SeekFrom::End;
-	use std::iter::Enumerate;
 
-	use ndarray::{Array, array, stack};
-	use rand::{Rng, SeedableRng};
-	use rand::distributions::Open01;
-	use rand::rngs::{StdRng, ThreadRng};
+	use ndarray::{Array};
+	use rand::{SeedableRng};
+	use rand::rngs::{StdRng};
 	use rand::seq::SliceRandom;
 
 	pub use crate::state::*;
