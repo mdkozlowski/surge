@@ -11,11 +11,14 @@ pub mod engine {
 	use std::collections::HashSet;
 
 	use ndarray::{Array};
+	use rand::prelude::*;
 	use rand::{SeedableRng};
 	use rand::rngs::{StdRng};
 	use rand::seq::SliceRandom;
+	use rand_distr::Dirichlet;
 
 	pub use crate::state::*;
+	use std::slice::Iter;
 
 	#[derive(Debug)]
 	pub struct Engine {
@@ -33,8 +36,8 @@ pub mod engine {
 	impl EngineConfig {
 		pub fn default() -> EngineConfig {
 			EngineConfig {
-				board_size: 7,
-				fruit_density: 0.3_f32,
+				board_size: 15,
+				fruit_density: 0.2_f32,
 				populate_board: true,
 			}
 		}
@@ -123,7 +126,7 @@ pub mod engine {
 		}
 
 		pub fn initialise_board(conf: EngineConfig) -> (BoardState, Player, Player) {
-			let mut rng: StdRng = SeedableRng::seed_from_u64(1234);
+			let mut rng: StdRng = SeedableRng::seed_from_u64(12345);
 
 			let mut board_fruit: ndarray::ArrayBase<ndarray::OwnedRepr<std::option::Option<FruitType>>, ndarray::Dim<[usize; 2]>>
 				= Array::from_elem((conf.board_size as usize, conf.board_size as usize), None);
@@ -152,16 +155,17 @@ pub mod engine {
 			};
 
 			if conf.populate_board {
-				let total_fruit = conf.fruit_density * (conf.board_size.pow(2) as f32);
-				let mut n_fruit = (total_fruit / 3.0f32).ceil() as usize;
-				if n_fruit % 2 == 0 {
-					n_fruit = n_fruit + 1;
-				}
+				let total_fruit = (conf.fruit_density * ((conf.board_size as u32).pow(2) as f32)).ceil();
+				let dirichlet = Dirichlet::new_with_size(5.0f32, 3).unwrap();
+				let proportions = dirichlet.sample(&mut rng);
+				let mut fruit_counts = proportions.iter()
+					.map(|a| (a * total_fruit).round() as usize)
+					.map(|a| a + 1 - (a % 2));
 
-				let mut fruit_values: Vec<FruitType> =
-					iter::repeat(FruitType::Apple).take(n_fruit)
-						.chain(iter::repeat(FruitType::Banana).take(n_fruit))
-						.chain(iter::repeat(FruitType::Orange).take(n_fruit)).collect();
+				let mut fruit_values = fruit_counts
+					.zip([FruitType::Apple, FruitType::Orange, FruitType::Banana].iter().copied())
+					.flat_map(|(count, fruit)| iter::repeat(fruit).take(count)).collect::<Vec<FruitType>>();
+
 				fruit_values.shuffle(&mut rng);
 
 				for (fruit, pos) in fruit_values.iter().zip(board_positions.iter()) {

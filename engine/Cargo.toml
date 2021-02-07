@@ -12,6 +12,7 @@ name = "engine"
 
 [dependencies]
 rand = "0.8.2"
+rand_distr = "0.4.0"
 num-traits = "0.2"
 num-derive = "0.3.3"
 ndarray = "0.14.0"
