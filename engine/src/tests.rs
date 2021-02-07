@@ -39,10 +39,15 @@ mod tests {
 	}
 
 	#[test]
-	fn move_oob() {
+	fn move_oob_valid_moves() {
 		let mut engine = blank_engine();
 		engine.current_state.player1 = blank_player(Position::new(0, 0));
 		engine.current_state.player2 = blank_player(Position::new(4, 4));
+
+		let p1_valid_moves = engine.get_valid_moves(&engine.current_state.player1);
+		assert!(!p1_valid_moves.contains(&Action::Move(Direction::Up)));
+		assert!(p1_valid_moves.contains(&Action::Move(Direction::Down)));
+
 		engine.apply_actions((Action::Move(Direction::Up),
 							  Action::Move(Direction::Right)));
 
@@ -93,6 +98,7 @@ mod tests {
 		assert_eq!(engine.current_state.board.get_fruit(3, 3), None);
 		assert_eq!(*engine.current_state.player1.get_fruit_count(FruitType::Orange), 0.5f32);
 		assert_eq!(*engine.current_state.player2.get_fruit_count(FruitType::Orange), 0.5f32);
+
 		assert_eq!(*engine.current_state.player2.get_fruit_count(FruitType::Apple), 0.0f32);
 	}
 }

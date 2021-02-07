@@ -58,7 +58,7 @@ pub mod engine {
 			}
 		}
 
-		pub fn get_valid_moves(self: &Self, player: Player) -> HashSet<Action> {
+		pub fn get_valid_moves(self: &Self, player: &Player) -> HashSet<Action> {
 			let outside_bounds = |board_size, val| {
 				val >= board_size || val < 0
 			};
@@ -80,6 +80,9 @@ pub mod engine {
 		}
 
 		pub fn apply_actions(&mut self, actions: (Action, Action)) {
+			//let p1_actions = self.get_valid_moves(&self.current_state.player1);
+			//let p2_actions = self.get_valid_moves(&self.current_state.player2);
+
 			let mut p1_target = Engine::resolve_move(actions.0, &self.current_state.player1.position);
 			let mut p2_target = Engine::resolve_move(actions.1, &self.current_state.player2.position);
 
