@@ -5,6 +5,7 @@ use std::{ops};
 
 use rand::{Rng};
 use rand::rngs::{ThreadRng};
+use std::hash::Hash;
 
 #[derive(Eq, Hash, PartialEq, Debug, Clone, Copy)]
 pub enum Direction {
@@ -12,6 +13,18 @@ pub enum Direction {
 	Down,
 	Left,
 	Right,
+}
+
+#[derive(Eq, Hash, PartialEq, Debug, Clone, Copy)]
+pub enum WinState {
+	InProgress,
+	Finished(PlayerWinner)
+}
+
+#[derive(Eq, Hash, PartialEq, Debug, Clone, Copy)]
+pub enum PlayerWinner {
+	Player1,
+	Player2
 }
 
 impl Direction {
@@ -95,20 +108,21 @@ impl Position {
 	}
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Player {
 	pub fruit_counts: HashMap<FruitType, f32>,
 	pub position: Position,
-
+	pub reward: f32
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct BoardState {
 	pub fruit_map: ndarray::ArrayBase<ndarray::OwnedRepr<std::option::Option<FruitType>>, ndarray::Dim<[usize; 2]>>,
 	pub size: i8,
+	pub fruit_counts: HashMap<FruitType, usize>
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct GameState {
 	pub player1: Player,
 	pub player2: Player,
@@ -118,22 +132,51 @@ pub struct GameState {
 
 #[derive(Debug)]
 pub struct SAR {
-	gamestate: GameState,
-	actions: [Action; 2],
-	reward: [f32; 2],
+	pub(crate) gamestate: GameState,
+	pub(crate) actions: [Action; 2],
+	pub(crate) reward: [f32; 2],
 }
 
 impl BoardState {
 	pub fn set_fruit(&mut self, x: usize, y: usize, fruit: Option<FruitType>) {
 		self.fruit_map[[x as usize, y as usize]] = fruit;
+		self.update_fruit_counts();
 	}
 
 	pub fn get_fruit(&mut self, x: usize, y: usize) -> Option<FruitType> {
 		self.fruit_map[[x as usize, y as usize]].clone()
 	}
+
+	pub fn update_fruit_counts(&mut self) {
+		let board = &self.fruit_map;
+		let mut fruit_counts = HashMap::<FruitType, usize>::new();
+
+		for fruit_cell in board.iter() {
+			match *fruit_cell {
+				Some(fruit) => {
+					let mut val = fruit_counts.entry(fruit).or_insert(0);
+					*val += 1;
+				}
+				_ => {}
+			}
+		}
+		self.fruit_counts = fruit_counts;
+	}
 }
 
 impl Player {
+	pub fn new(pos: Position) -> Self {
+		let mut fruit_counts = HashMap::new();
+		fruit_counts.insert(FruitType::Apple, 0.0f32);
+		fruit_counts.insert(FruitType::Banana, 0.0f32);
+		fruit_counts.insert(FruitType::Orange, 0.0f32);
+		Player {
+			position: pos,
+			fruit_counts,
+			reward: 0.0f32
+		}
+	}
+
 	pub fn move_player(&mut self, new_pos: Position) {
 		self.position = new_pos;
 	}
@@ -141,6 +184,7 @@ impl Player {
 	pub fn increment_fruit(&mut self, fruit: FruitType, amount: f32) {
 		let fruit_ref = self.fruit_counts.get_mut(&fruit).unwrap();
 		*fruit_ref += amount;
+		self.reward += amount;
 	}
 
 	pub fn get_fruit_count(&self, fruit: FruitType) -> &f32 {
@@ -185,6 +229,7 @@ impl GameState {
 				 self.player2.fruit_counts.get(&FruitType::Apple).unwrap(),
 				 self.player2.fruit_counts.get(&FruitType::Banana).unwrap(),
 				 self.player2.fruit_counts.get(&FruitType::Orange).unwrap());
+		println!("{:?}", self.board.fruit_counts);
 		println!("===================")
 	}
 }
