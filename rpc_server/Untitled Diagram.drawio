@@ -1,1 +1,85 @@
-<mxfile host="app.diagrams.net" modified="2021-02-13T16:51:29.028Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.146 Safari/537.36" etag="gWkENvV5zFKFfq6zBbYW" version="14.3.1" type="github"><diagram id="5qzq35ki77FjHHEtWfl3" name="Page-1">5VpZc9s2EP41mrYP9vCQKOnRlp00TexxrcwkferAJHjUIKCAkCXn13cBAuIBSrJjyfLxRGKJY7EXvl2w50/y5UeOZukFizDpeU607PlnPc9z3eEIHpJyX1KCwbgkJDyLdKeKMM1+Yk10NHWeRbhodBSMEZHNmsSQUYpD0aAhztmi2S1mpLnqDCXYIkxDRGzqtywSqdlXMK4+/ImzJNVLj7xh+SFHprPeSZGiiC1qJP+85084Y6J8y5cTTKTwjFzKcR/WfF0xxjEVDxnwaYyiHz/H/K+L4uti0f986324PHL1Ngpxb3aMIxCAbjIuUpYwish5RT3lbE4jLKd1oFX1+cLYDIguEP/DQtxrbaK5YEBKRU70V+CY33+X448HpvmPnk41zpaN1r1ulbxKBtfKQJMKNuch3rRxbUuIJ1hs6DdeaQpMHLMcAz8wjmOCRHbX5ANpW0tW/Sp1wIvWyGO0U857h8hcrzQFhgWQrhkhbC4m8ACrzxi11FgpSUp8kWYCT2dIyWQBrtpUiF4Hc4GXm0Vri0IP6Gszv282FzWnMZ6Q1vwlcPYkO8+SXc8LCKx6GjMqGrIKfsyZ+XBUKKM9gQ6uM1tWH+Etkc8Jo3GWqB7ldDfcfDIU4Ldco0mek19f1cxBsjblabu5nOc3GDbgsFhFVoEkk9OT69+KLbsBss3MrtmbYmneYMUqnoZpjm4zmkhzScAsXwSL5zTJKJbjIeQBc09kypygGY0ZPH7PdZuiHBaZKJcU6R8bZwOitDVDbAUGcHHR9P5CcHaLIZYwDhTKqAzycUZIi4RIllBoEhzLGWS4yOCkPNHkPIsidT50BZvmmbGDeOMOPTg86iFnYIccryvkjPYVcvpWyDHanArGsX3SEgIwZp3EagpCxazENnG2lDJsKKfn+XEce2FoaRK+RMFNMAh2I/HAbYb4FUarCXz0nPIO9hTivzAkIw5SHCgHLJRHCumROc6Z5L0d/D9jPJODJBYlTEUEFVMxClMzjQKgvCKWseMTLQSioPp1gWPnDhyCxiHqH9qFg3HToNxhB2gYdFjUirhzkxpbJmW0c4EoHDr81534ID7bd7b7bCcu25vTujao3YBdne1yTQgqCt21uMWAEkzDJFw7QriuP2ydOP6oQ5rDgS1Nz9+bOH1LnDo3+Mb4rYJ2riXflxFBGvpZq8X9KC7ocoMuxe1Nb0NLbx8VxHMMoHxKPvcw0R4kIq1it0Ftvq2KLhfaW6LojtbCiDUZGwH9HBneFIyQexg8JmsrZoga2t9zrAQUzrkSolwSCWkKiEaq1iDmnCq5h0LBh7sML2pooT7Zxqx0U+JxJY3EWsMRKRheUkcwHMcY+GzglU0TT1Ic3sK4pDRvrKz4YUOvzc7bCenmQZCJqYVKPzpgovS6oqTXdEx/3BEjR6ukq4HH+nur4jjb0QJY1Ims9Fby7yw19uqFxqruuKbUiJeZ+G7mgPfaKGhVg2RjD+VJjUO3lif73SqtqawLPxvag6uYeoUrlqn4pC1m0EoI/WHLDMpt6lH10nR7oqA1UfvYLeVgTaRMarXtJ1jZq8WkvvfiEKmR3QZEakv3ncVaS20Hx6OeXbx6JS4QOO1C4EtwgsFWJ7h8707QobjDu4Gdlj0Ab0SoSFepWU19kn6FBKiEKorn+Culmttk7/WClNWF/DaU4h0UpvjWTYHfxqsPBSp9rz2VN35mqNKVrbYM1DawZmlgJvvly0T+sXEcE7YIU8TFMaKUQeKZMfqv17Nuewi6weSKFZm6bfbPeKmn05ncKebnd+pC7jHlB65Xg+Z4RyHF1s9RR8Fz2GFrgTkfdh9S7JryVxno33n091s/DHgddaB+h6L2Fvp9O9V8U9d34BztC9MOkQddvrE3kdt51/sograN/+BFUN9O2t6U8fe99hXA4Y3fvrl5H8YfuNs18bzG/8Z/3Bg6wbH3bNYPzeqn1hL2Vr8G++f/Aw==</diagram></mxfile>
+<mxfile host="app.diagrams.net" modified="2021-02-13T16:53:38.467Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.146 Safari/537.36" etag="RPGzMNTWr16iQENNrrU_" version="14.3.1" type="github">
+  <diagram id="5qzq35ki77FjHHEtWfl3" name="Page-1">
+    <mxGraphModel dx="1422" dy="757" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="I9adqz9rJMsTww4Kk2FN-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="I9adqz9rJMsTww4Kk2FN-1" target="I9adqz9rJMsTww4Kk2FN-9" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="I9adqz9rJMsTww4Kk2FN-1" value="Start RolloutCollection" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="40" y="40" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="I9adqz9rJMsTww4Kk2FN-2" value="&lt;font style=&quot;font-size: 10px&quot;&gt;Config:&lt;br&gt;&lt;/font&gt;&lt;ul style=&quot;font-size: 10px&quot;&gt;&lt;li&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;Number of total SAR&#39;s&lt;/font&gt;&lt;/li&gt;&lt;li&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;Selected matchmaking agents&lt;/font&gt;&lt;/li&gt;&lt;li&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;Engine settings&lt;/font&gt;&lt;/li&gt;&lt;li&gt;Model info (model name, path)&lt;/li&gt;&lt;/ul&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="172.5" y="50" width="220" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="I9adqz9rJMsTww4Kk2FN-4" value="Model Store" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+          <mxGeometry x="610" y="210" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="I9adqz9rJMsTww4Kk2FN-6" value="&lt;font style=&quot;font-size: 10px&quot;&gt;Load all models into memory&lt;br&gt;Keep a clone of each model for each EngineInstance&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="690" y="170" width="150" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="I9adqz9rJMsTww4Kk2FN-9" value="RolloutManager" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+          <mxGeometry x="400" y="210" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="I9adqz9rJMsTww4Kk2FN-11" value="" style="rounded=0;whiteSpace=wrap;html=1;glass=0;sketch=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="137.5" y="430" width="175" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="I9adqz9rJMsTww4Kk2FN-13" value="RolloutWorker 1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;shadow=1;glass=0;sketch=0;" parent="1" vertex="1">
+          <mxGeometry x="137.5" y="410" width="125" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="I9adqz9rJMsTww4Kk2FN-17" value="Game Engine" style="rounded=1;whiteSpace=wrap;html=1;shadow=1;glass=0;sketch=0;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+          <mxGeometry x="150" y="580" width="75" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="I9adqz9rJMsTww4Kk2FN-18" value="&lt;ul style=&quot;line-height: 130%&quot;&gt;&lt;li&gt;&lt;span&gt;Query current state and return vector view&lt;/span&gt;&lt;br&gt;&lt;/li&gt;&lt;li&gt;Pass vector view through model reference&lt;/li&gt;&lt;li&gt;Check game ended&lt;/li&gt;&lt;li&gt;Return SAR&#39;s&lt;/li&gt;&lt;li&gt;Reset engine&lt;/li&gt;&lt;/ul&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;shadow=1;glass=0;sketch=0;" parent="1" vertex="1">
+          <mxGeometry x="120" y="440" width="182.5" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="I9adqz9rJMsTww4Kk2FN-20" value="" style="endArrow=none;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="I9adqz9rJMsTww4Kk2FN-9" target="I9adqz9rJMsTww4Kk2FN-4" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="510" y="370" as="sourcePoint" />
+            <mxPoint x="560" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="I9adqz9rJMsTww4Kk2FN-21" value="" style="rounded=0;whiteSpace=wrap;html=1;glass=0;sketch=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="325" y="430" width="175" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="I9adqz9rJMsTww4Kk2FN-22" value="RolloutWorker 2" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;shadow=1;glass=0;sketch=0;" parent="1" vertex="1">
+          <mxGeometry x="325" y="410" width="125" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="I9adqz9rJMsTww4Kk2FN-24" value="" style="rounded=0;whiteSpace=wrap;html=1;glass=0;sketch=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="602.5" y="430" width="175" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="I9adqz9rJMsTww4Kk2FN-25" value="RolloutWorker N" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;shadow=1;glass=0;sketch=0;" parent="1" vertex="1">
+          <mxGeometry x="602.5" y="410" width="125" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="I9adqz9rJMsTww4Kk2FN-27" value="" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="I9adqz9rJMsTww4Kk2FN-21" target="I9adqz9rJMsTww4Kk2FN-24" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="372.5" y="390" as="sourcePoint" />
+            <mxPoint x="422.5" y="340" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="I9adqz9rJMsTww4Kk2FN-28" value="" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.annotation_2;align=left;labelPosition=right;pointerEvents=1;shadow=1;glass=0;sketch=0;rotation=90;" parent="1" vertex="1">
+          <mxGeometry x="422.5" y="40" width="70" height="675" as="geometry" />
+        </mxCell>
+        <mxCell id="I9adqz9rJMsTww4Kk2FN-29" value="&lt;ul&gt;&lt;li&gt;Main SARS store&lt;/li&gt;&lt;li&gt;Matchmaking settings&lt;/li&gt;&lt;li&gt;Interrupt channel&lt;/li&gt;&lt;/ul&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;shadow=1;glass=0;sketch=0;" parent="1" vertex="1">
+          <mxGeometry x="372.5" y="300" width="170" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="I9adqz9rJMsTww4Kk2FN-30" value="Model Store" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+          <mxGeometry x="242.5" y="580" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="I9adqz9rJMsTww4Kk2FN-31" value="Game Engine" style="rounded=1;whiteSpace=wrap;html=1;shadow=1;glass=0;sketch=0;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+          <mxGeometry x="340" y="580" width="75" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="I9adqz9rJMsTww4Kk2FN-32" value="Model Store" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+          <mxGeometry x="427.5" y="580" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="I9adqz9rJMsTww4Kk2FN-33" value="Game Engine" style="rounded=1;whiteSpace=wrap;html=1;shadow=1;glass=0;sketch=0;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+          <mxGeometry x="615" y="580" width="75" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="I9adqz9rJMsTww4Kk2FN-34" value="Model Store" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+          <mxGeometry x="706.25" y="580" width="60" height="60" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
