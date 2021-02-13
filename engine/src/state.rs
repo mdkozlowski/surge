@@ -154,7 +154,7 @@ impl BoardState {
 		for fruit_cell in board.iter() {
 			match *fruit_cell {
 				Some(fruit) => {
-					let mut val = fruit_counts.entry(fruit).or_insert(0);
+					let val = fruit_counts.entry(fruit).or_insert(0);
 					*val += 1;
 				}
 				_ => {}

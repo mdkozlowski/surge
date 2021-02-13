@@ -1,10 +1,8 @@
 #[allow(dead_code)]
 mod tests;
 
-#[allow(dead_code)]
 pub mod state;
 
-#[allow(dead_code)]
 pub mod engine {
 	use std::{collections::{HashMap, VecDeque}};
 	use std::{iter};
@@ -18,10 +16,6 @@ pub mod engine {
 	use rand_distr::Dirichlet;
 
 	pub use crate::state::*;
-	use std::slice::Iter;
-	use std::io::SeekFrom::End;
-	use std::env::current_dir;
-	use crate::state::PlayerWinner::Player2;
 	use crate::state::FruitType::{Apple, Banana, Orange};
 
 	#[derive(Debug)]
@@ -30,6 +24,7 @@ pub mod engine {
 		pub current_state: GameState,
 	}
 
+	#[derive(Clone)]
 	pub struct EngineConfig {
 		pub board_size: i8,
 		pub fruit_density: f32,
@@ -200,7 +195,7 @@ pub mod engine {
 				board.fruit_map[[player_pos.x as usize, player_pos.y as usize]] = None;
 				player.increment_fruit(fruit, 1.0f32);
 
-				let mut count = board.fruit_counts.get_mut(&fruit).unwrap();
+				let count = board.fruit_counts.get_mut(&fruit).unwrap();
 				*count -= 1;
 			}
 		}
@@ -239,12 +234,12 @@ pub mod engine {
 				let total_fruit = (conf.fruit_density * ((conf.board_size as u32).pow(2) as f32)).ceil();
 				let dirichlet = Dirichlet::new_with_size(5.0f32, 3).unwrap();
 				let proportions = dirichlet.sample(&mut rng);
-				let mut fruit_counts = proportions.iter()
+				let fruit_counts = proportions.iter()
 					.map(|a| (a * total_fruit).round() as usize)
 					.map(|a| a + 1 - (a % 2))
 					.collect::<Vec<usize>>();
 
-				let mut fruit_values = &mut fruit_counts.iter()
+				let fruit_values = &mut fruit_counts.iter()
 					.zip([Apple, Orange, Banana].iter().copied())
 					.flat_map(|(count, fruit)| iter::repeat(fruit).take(*count))
 					.collect::<Vec<FruitType>>();
@@ -260,7 +255,7 @@ pub mod engine {
 				player2.position = board_positions_queue.pop_front().unwrap();
 
 				for (count, fruit_type) in fruit_counts.iter().zip([Apple, Banana, Orange].iter().copied()) {
-					let mut fruit_ref = fruit_counts_map.get_mut(&fruit_type).unwrap();
+					let fruit_ref = fruit_counts_map.get_mut(&fruit_type).unwrap();
 					*fruit_ref += count;
 				}
 			}

@@ -8,5 +8,6 @@
 [workspace]
 members = [
     "engine",
+    "game_runner",
     "rpc_server"
 ]
