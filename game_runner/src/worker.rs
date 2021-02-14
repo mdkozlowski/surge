@@ -53,7 +53,7 @@ impl<'a> ModelStore<'a> {
 		model
 	}
 }
- b
+
 impl<'a> RolloutWorker<'a> {
 	pub fn new(conf: RunnerConfig, model_store: ModelStore<'a>) -> Self {
 		let engine = Engine::new(conf.engine_config.clone());
