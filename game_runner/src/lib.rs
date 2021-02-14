@@ -1,17 +1,16 @@
-mod tests;
-
-use engine::engine::{Engine, EngineConfig};
-use rand::rngs::ThreadRng;
 use rand::Rng;
+use rand::rngs::ThreadRng;
 use rand::seq::SliceRandom;
 
-pub struct EngineInstance {
-	conf: RunnerConfig,
-	engine: Engine,
-}
+use engine::engine::{Engine, EngineConfig};
+use worker::RolloutWorker;
 
-pub struct Runner {
-	instances: Vec<EngineInstance>,
+mod tests;
+pub mod manager;
+pub mod worker;
+
+pub struct Runner<'a> {
+	instances: Vec<RolloutWorker<'a>>,
 
 }
 
@@ -22,22 +21,8 @@ pub struct MatchmakingPool {
 }
 
 pub struct RunnerConfig {
-	engine_config: EngineConfig,
+	pub engine_config: EngineConfig,
 
-}
-
-impl EngineInstance {
-	pub fn new(conf: RunnerConfig) -> Self {
-		let engine = Engine::new(conf.engine_config.clone());
-		EngineInstance {
-			conf,
-			engine,
-		}
-	}
-
-	pub fn reset(mut self) {
-		self.engine = Engine::new(conf.engine_config.clone());
-	}
 }
 
 impl MatchmakingPool {

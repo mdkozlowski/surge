@@ -17,6 +17,7 @@ pub mod engine {
 
 	pub use crate::state::*;
 	use crate::state::FruitType::{Apple, Banana, Orange};
+	use std::time::SystemTime;
 
 	#[derive(Debug)]
 	pub struct Engine {
@@ -29,15 +30,17 @@ pub mod engine {
 		pub board_size: i8,
 		pub fruit_density: f32,
 		pub populate_board: bool,
+		pub random_seed: u64
 	}
 
 
 	impl EngineConfig {
 		pub fn default() -> EngineConfig {
 			EngineConfig {
-				board_size: 15,
+				board_size: 10,
 				fruit_density: 0.2_f32,
 				populate_board: true,
+				random_seed: 123
 			}
 		}
 	}
@@ -78,7 +81,7 @@ pub mod engine {
 			return (pos.x < 0 || pos.x >= board_size) || (pos.y < 0 || pos.y >= board_size);
 		}
 
-		pub(crate) fn apply_move(&mut self, actions: (Action, Action)) -> WinState {
+		pub fn apply_move(&mut self, actions: (Action, Action)) -> WinState {
 			let state = self.current_state.clone();
 			let actions_copy = actions.clone();
 
@@ -98,7 +101,7 @@ pub mod engine {
 			win_state
 		}
 
-		fn check_gameover(self: &Self) -> WinState {
+		pub fn check_gameover(self: &Self) -> WinState {
 			let most_fruit_counts = self.current_state.board.fruit_counts.values().max();
 			match most_fruit_counts {
 				Some(count) => {
@@ -208,7 +211,7 @@ pub mod engine {
 		}
 
 		pub fn initialise_board(conf: EngineConfig) -> (BoardState, Player, Player) {
-			let mut rng: StdRng = SeedableRng::seed_from_u64(12345);
+			let mut rng: StdRng = StdRng::seed_from_u64(conf.random_seed);
 
 			let mut board_fruit: ndarray::ArrayBase<ndarray::OwnedRepr<std::option::Option<FruitType>>, ndarray::Dim<[usize; 2]>>
 				= Array::from_elem((conf.board_size as usize, conf.board_size as usize), None);

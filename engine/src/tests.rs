@@ -11,6 +11,7 @@ mod tests {
 			board_size: 5,
 			populate_board: false,
 			fruit_density: 0.0,
+			random_seed: 123
 		})
 	}
 
