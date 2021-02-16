@@ -19,7 +19,7 @@ pub mod engine {
 	use crate::state::FruitType::{Apple, Banana, Orange};
 	use std::time::SystemTime;
 
-	#[derive(Debug)]
+	#[derive(Debug, Clone)]
 	pub struct Engine {
 		game_history: Vec<SAR>,
 		pub current_state: GameState,
@@ -56,6 +56,7 @@ pub mod engine {
 					player2,
 					board: board_state,
 					round: 0,
+					match_status: WinState::InProgress
 				},
 			}
 		}
@@ -81,15 +82,36 @@ pub mod engine {
 			return (pos.x < 0 || pos.x >= board_size) || (pos.y < 0 || pos.y >= board_size);
 		}
 
-		pub fn apply_move(&mut self, actions: (Action, Action)) -> WinState {
+		pub fn apply_move(&mut self, actions: (Action, Action), reward_added: Option<f32>) -> WinState {
 			let state = self.current_state.clone();
 			let actions_copy = actions.clone();
 
 			self.resolve_actions(actions);
-			let new_rewards = Engine::make_reward_zerosum(
-				self.current_state.player1.reward, self.current_state.player2.reward);
 			self.current_state.round += 1;
 
+			let win_state = self.check_gameover();
+			match win_state {
+				WinState::Finished(winner) => {
+					match winner {
+						PlayerWinner::Player1 => {
+							self.current_state.player1.reward += 10.0f32;
+						}
+						PlayerWinner::Player2 => {
+							self.current_state.player1.reward += -10.0f32;
+						},
+					}
+				}
+				WinState::InProgress => {
+					let reward = match reward_added {
+						Some(amt) => amt,
+						None => -0.1f32
+					};
+					self.current_state.player1.reward += reward;
+				}
+			}
+
+			let new_rewards = Engine::make_reward_zerosum(
+				self.current_state.player1.reward, self.current_state.player2.reward);
 			let sar: SAR = SAR {
 				reward: [new_rewards.0, new_rewards.1],
 				actions: [actions_copy.0, actions_copy.1],
@@ -97,7 +119,7 @@ pub mod engine {
 			};
 			self.game_history.push(sar);
 
-			let win_state = self.check_gameover();
+			self.current_state.match_status = win_state;
 			win_state
 		}
 
