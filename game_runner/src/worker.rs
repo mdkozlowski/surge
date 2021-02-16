@@ -1,25 +1,34 @@
-use engine::engine::Engine;
-
-use crate::RunnerConfig;
-use std::path::Path;
-use ndarray::Array;
+use std::collections::HashMap;
+use std::convert::TryInto;
 use std::iter::FromIterator;
-use engine::state::FruitType;
+use std::path::Path;
+
+use ndarray::Array;
+use rand::rngs::ThreadRng;
+use rand::seq::SliceRandom;
 use rand_distr::num_traits::Pow;
 use rand_distr::num_traits::real::Real;
-use tch::CModule;
-use std::collections::HashMap;
+use tch::{CModule, Tensor};
+use tch::nn::Module;
+
+use engine::engine::Engine;
+use engine::state::{Action, Direction, FruitType, WinState};
+use engine::state::Direction::Up;
+
+use crate::manager::RolloutConfig;
+use rand::thread_rng;
 
 pub struct RolloutWorker<'a> {
-	conf: RunnerConfig,
+	conf: RolloutConfig,
 	engine: Engine,
 	model_store: ModelStore<'a>,
+	matchmaking: MatchmakingPool,
 }
 
 pub struct ModelStore<'a> {
 	pub root_path: &'a Path,
 	pub model_ids: Vec<usize>,
-	pub models_hash: HashMap<usize, CModule>
+	pub models_hash: HashMap<usize, CModule>,
 }
 
 pub enum PlayerIdx {
@@ -41,7 +50,7 @@ impl<'a> ModelStore<'a> {
 		ModelStore {
 			root_path,
 			model_ids,
-			models_hash
+			models_hash,
 		}
 	}
 
@@ -55,12 +64,49 @@ impl<'a> ModelStore<'a> {
 }
 
 impl<'a> RolloutWorker<'a> {
-	pub fn new(conf: RunnerConfig, model_store: ModelStore<'a>) -> Self {
+	pub fn new(conf: RolloutConfig, model_store: ModelStore<'a>) -> Self {
 		let engine = Engine::new(conf.engine_config.clone());
 		RolloutWorker {
+			matchmaking: MatchmakingPool {
+				target_id: (&conf.agent_ids.0).clone(),
+				opponent_ids: (&conf.agent_ids.1).clone(),
+				rng: thread_rng(),
+			},
 			conf,
 			engine,
 			model_store,
+		}
+	}
+
+	pub fn play_match(self: &mut Self) {
+		let agent_ids = self.matchmaking.sample_pair();
+
+		self.reset();
+		while self.engine.current_state.match_status == WinState::InProgress {
+			let states = (self.get_state_vec_view(PlayerIdx::Player1),
+						  self.get_state_vec_view(PlayerIdx::Player2));
+			let actions = (self.run_model(agent_ids.0, states.0),
+						   self.run_model(agent_ids.1, states.1));
+			self.engine.apply_move(actions, Some(-0.1f32));
+
+			if self.engine.current_state.round >= self.conf.max_rounds as u32 {
+				break;
+			}
+		}
+		println!("Done after {} rounds", self.engine.current_state.round);
+	}
+
+	pub fn run_model(self: &Self, model_idx: usize, state_vec: Vec<f32>) -> Action {
+		let state_tensor = Tensor::of_slice(&state_vec);
+		let pred = self.model_store.models_hash.get(&model_idx).unwrap().forward(&state_tensor);
+		let action_idx = i32::from(pred.argmax(0, false));
+
+		match action_idx {
+			0 => Action::Move(Direction::Up),
+			1 => Action::Move(Direction::Down),
+			2 => Action::Move(Direction::Left),
+			3 => Action::Move(Direction::Right),
+			_ => Action::DoNothing,
 		}
 	}
 
@@ -158,5 +204,27 @@ impl<'a> RolloutWorker<'a> {
 		self.engine = Engine::new(self.conf.engine_config.clone());
 		// get new matchmaking settings
 		// load new models
+	}
+}
+
+pub struct MatchmakingPool {
+	target_id: usize,
+	opponent_ids: Vec<usize>,
+	rng: ThreadRng,
+}
+
+impl MatchmakingPool {
+	pub fn new(target: usize, opponents: Vec<usize>) -> Self {
+		let mut thread_rng = ThreadRng::default();
+		Self {
+			target_id: target,
+			opponent_ids: opponents,
+			rng: thread_rng,
+		}
+	}
+
+	pub fn sample_pair(self: &mut Self) -> (usize, usize) {
+		let opponent = self.opponent_ids.choose(&mut self.rng).unwrap();
+		(self.target_id, *opponent)
 	}
 }

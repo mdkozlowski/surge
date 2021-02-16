@@ -128,9 +128,10 @@ pub struct GameState {
 	pub player2: Player,
 	pub board: BoardState,
 	pub round: u32,
+	pub match_status: WinState
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct SAR {
 	pub(crate) gamestate: GameState,
 	pub(crate) actions: [Action; 2],
