@@ -9,7 +9,8 @@ use crate::worker::RolloutWorker;
 pub struct RolloutConfig {
 	pub engine_config: EngineConfig,
 	pub agent_ids: (usize, Vec<usize>),
-	pub max_rounds: u32
+	pub max_rounds: u32,
+	pub evaluation_mode: bool
 }
 
 pub struct RolloutManager<'a>  {

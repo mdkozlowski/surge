@@ -18,7 +18,8 @@ fn main() {
             board_size: 10,
         },
         agent_ids: (1, vec![2,3]),
-        max_rounds: 1000
+        max_rounds: 5_000,
+        evaluation_mode: false
     }, model_store);
-    worker.play_match();
+    worker.play_match_ai();
 }

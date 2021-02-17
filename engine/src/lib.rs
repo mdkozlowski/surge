@@ -21,7 +21,7 @@ pub mod engine {
 
 	#[derive(Debug, Clone)]
 	pub struct Engine {
-		game_history: Vec<SAR>,
+		pub game_history: Vec<SAR>,
 		pub current_state: GameState,
 	}
 
@@ -113,9 +113,10 @@ pub mod engine {
 			let new_rewards = Engine::make_reward_zerosum(
 				self.current_state.player1.reward, self.current_state.player2.reward);
 			let sar: SAR = SAR {
-				reward: [new_rewards.0, new_rewards.1],
-				actions: [actions_copy.0, actions_copy.1],
+				reward: new_rewards.0,
+				actions: actions_copy.0,
 				gamestate: state,
+				terminal: win_state != WinState::InProgress
 			};
 			self.game_history.push(sar);
 
@@ -219,9 +220,17 @@ pub mod engine {
 			if let Some(fruit) = board.fruit_map[[player_pos.x as usize, player_pos.y as usize]] {
 				board.fruit_map[[player_pos.x as usize, player_pos.y as usize]] = None;
 				player.increment_fruit(fruit, 1.0f32);
-
-				let count = board.fruit_counts.get_mut(&fruit).unwrap();
-				*count -= 1;
+				board.update_fruit_counts();
+				// let count = board.fruit_counts.get_mut(&fruit);
+				// match count {
+				// 	Some(size) => {
+				// 		*size -= 1;
+				// 		// println!("{:?}: {}", &fruit, size);
+				// 	}
+				// 	None => {
+				// 		// println!("None for some reason");
+				// 	}
+				// }
 			}
 		}
 

@@ -134,8 +134,9 @@ pub struct GameState {
 #[derive(Debug, Clone)]
 pub struct SAR {
 	pub(crate) gamestate: GameState,
-	pub(crate) actions: [Action; 2],
-	pub(crate) reward: [f32; 2],
+	pub(crate) actions: Action,
+	pub(crate) reward: f32,
+	pub(crate) terminal: bool
 }
 
 impl BoardState {

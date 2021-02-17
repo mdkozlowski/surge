@@ -8,3 +8,4 @@ use worker::RolloutWorker;
 mod tests;
 pub mod manager;
 pub mod worker;
+mod ai;

@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::convert::TryInto;
 use std::iter::FromIterator;
 use std::path::Path;
@@ -12,17 +12,21 @@ use tch::{CModule, Tensor};
 use tch::nn::Module;
 
 use engine::engine::Engine;
-use engine::state::{Action, Direction, FruitType, WinState};
+use engine::state::{Action, Direction, FruitType, WinState, SAR, PlayerWinner};
 use engine::state::Direction::Up;
 
 use crate::manager::RolloutConfig;
 use rand::thread_rng;
+use std::time::Instant;
+use crate::ai::{RandomPlayer, AiPlayer};
 
 pub struct RolloutWorker<'a> {
 	conf: RolloutConfig,
 	engine: Engine,
 	model_store: ModelStore<'a>,
 	matchmaking: MatchmakingPool,
+	sar_store: Vec<SAR>,
+	win_history: Vec<(usize, usize, bool)>,
 }
 
 pub struct ModelStore<'a> {
@@ -75,31 +79,79 @@ impl<'a> RolloutWorker<'a> {
 			conf,
 			engine,
 			model_store,
+			win_history: Vec::new(),
+			sar_store: Vec::new(),
 		}
 	}
 
-	pub fn play_match(self: &mut Self) {
+	pub fn play_match_agents(self: &mut Self) {
 		let agent_ids = self.matchmaking.sample_pair();
-
+		let start = Instant::now();
 		self.reset();
 		while self.engine.current_state.match_status == WinState::InProgress {
-			let states = (self.get_state_vec_view(PlayerIdx::Player1),
-						  self.get_state_vec_view(PlayerIdx::Player2));
-			let actions = (self.run_model(agent_ids.0, states.0),
-						   self.run_model(agent_ids.1, states.1));
+			let states = (
+				self.get_state_vec_view(PlayerIdx::Player1),
+				self.get_state_vec_view(PlayerIdx::Player2)
+			);
+			let actions =
+				(
+					self.run_model(agent_ids.0, states.0.0, states.0.1, self.conf.evaluation_mode),
+					self.run_model(agent_ids.1, states.1.0, states.1.1, self.conf.evaluation_mode)
+				);
 			self.engine.apply_move(actions, Some(-0.1f32));
 
 			if self.engine.current_state.round >= self.conf.max_rounds as u32 {
 				break;
 			}
 		}
-		println!("Done after {} rounds", self.engine.current_state.round);
+		let winstate = self.engine.current_state.match_status;
+		println!("{:?}", winstate);
+		let duration = start.elapsed();
+
+		println!("Time elapsed in expensive_function() is: {:?}", duration);
+		self.sar_store.append(&mut self.engine.game_history);
+		self.win_history.push((agent_ids.0, agent_ids.1, winstate == WinState::Finished(PlayerWinner::Player1)))
 	}
 
-	pub fn run_model(self: &Self, model_idx: usize, state_vec: Vec<f32>) -> Action {
+	pub fn play_match_ai(self: &mut Self) {
+		let player_id = self.matchmaking.target_id;
+		let mut opponent = RandomPlayer::new();
+
+		let start = Instant::now();
+		self.reset();
+		while self.engine.current_state.match_status == WinState::InProgress {
+			let state = self.get_state_vec_view(PlayerIdx::Player1);
+			let player_action = self.run_model(player_id, state.0, state.1, self.conf.evaluation_mode);
+			let opponent_action = opponent.get_move(&self.engine.current_state);
+			self.engine.apply_move((player_action, opponent_action), Some(-0.1f32));
+
+			if self.engine.current_state.round >= self.conf.max_rounds as u32 {
+				break;
+			}
+		}
+		let winstate = self.engine.current_state.match_status;
+		println!("{:?}", winstate);
+		let duration = start.elapsed();
+
+		println!("Time elapsed in expensive_function() is: {:?}", duration);
+		self.sar_store.append(&mut self.engine.game_history);
+		self.win_history.push((player_id, 0, winstate == WinState::Finished(PlayerWinner::Player1)))
+	}
+
+	pub fn run_model(self: &Self, model_idx: usize, state_vec: Vec<f32>, action_mask: Vec<f32>,
+					 evaluation_mode: bool) -> Action {
 		let state_tensor = Tensor::of_slice(&state_vec);
-		let pred = self.model_store.models_hash.get(&model_idx).unwrap().forward(&state_tensor);
-		let action_idx = i32::from(pred.argmax(0, false));
+		let mut action_vector = Tensor::of_slice(&action_mask);
+		action_vector = action_vector * Tensor::from(-2.0f32);
+
+		let pred = self.model_store.models_hash.get(&model_idx).unwrap().forward(&state_tensor) + action_vector;
+
+		let action_idx = if evaluation_mode {
+			i32::from(pred.argmax(0, false))
+		} else {
+			pred.softmax(0, tch::Kind::Float).print();
+			i32::from(pred.softmax(0, tch::Kind::Float).multinomial(1, true))
+		};
 
 		match action_idx {
 			0 => Action::Move(Direction::Up),
@@ -110,7 +162,39 @@ impl<'a> RolloutWorker<'a> {
 		}
 	}
 
-	pub fn get_state_vec_view(self: &Self, idx: PlayerIdx) -> Vec<f32> {
+	pub fn get_state_vec_view(self: &Self, idx: PlayerIdx) -> (Vec<f32>, Vec<f32>) {
+		let action_mask = match idx {
+			PlayerIdx::Player1 => {
+				self.engine.get_valid_moves(&self.engine.current_state.player1)
+			}
+			PlayerIdx::Player2 => {
+				self.engine.get_valid_moves(&self.engine.current_state.player2)
+			}
+		};
+		let mut action_mask_array = Array::ones((4));
+		for item in action_mask {
+			match item {
+				Action::Move(dir) => {
+					match dir {
+						Direction::Up => {
+							action_mask_array[0] = 0.0f32;
+						}
+						Direction::Down => {
+							action_mask_array[1] = 0.0f32;
+						}
+						Direction::Left => {
+							action_mask_array[2] = 0.0f32;
+						}
+						Direction::Right => {
+							action_mask_array[3] = 0.0f32;
+						}
+					}
+				}
+				_ => {}
+			}
+		}
+		let action_mask_vec = Array::from_iter(action_mask_array.iter().cloned()).to_vec();
+
 		let mut map = Array::zeros((10, 10, 3));
 
 		let fruit_map = &self.engine.current_state.board.fruit_map;
@@ -197,7 +281,8 @@ impl<'a> RolloutWorker<'a> {
 		map_vec.append(&mut own_info_vec);
 		map_vec.append(&mut their_info_vec);
 		map_vec.append(&mut relative_info_vec);
-		map_vec
+
+		(map_vec, action_mask_vec)
 	}
 
 	pub fn reset(&mut self) {
