@@ -1,0 +1,47 @@
+// version of protocol buffer used
+syntax = "proto3";
+
+// package name for the buffer will be used later
+package surge_proto;
+
+// service which can be executed
+service MatchRunner {
+  // function which can be called
+  rpc StartMatch (RunnerConfig) returns (MatchesResponse);
+}
+
+// argument
+message RunnerConfig {
+  // data type and position of data
+  int32 target_id = 1;
+  repeated int32 agent_ids = 2;
+  int32 max_rounds = 3;
+  bool evaluation_mode = 4;
+  int32 max_sars = 5;
+}
+
+message MatchesResponse {
+  repeated MatchReplay replays = 1;
+}
+
+message SAR {
+  repeated float state = 1;
+  float reward = 2;
+  Action action = 3;
+  repeated Action action_mask = 4;
+  bool terminal = 5;
+}
+
+message MatchReplay {
+  int32 player1_id = 1;
+  int32 player2_id = 2;
+  bool result = 3;
+  repeated SAR sars = 4;
+}
+
+enum Action {
+  MoveUp = 0;
+  MoveDown = 1;
+  MoveLeft = 2;
+  MoveRight = 3;
+}

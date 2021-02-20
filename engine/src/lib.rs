@@ -110,12 +110,14 @@ pub mod engine {
 				}
 			}
 
+			let action_mask = self.get_valid_moves(&self.current_state.player1);
 			let new_rewards = Engine::make_reward_zerosum(
 				self.current_state.player1.reward, self.current_state.player2.reward);
 			let sar: SAR = SAR {
 				reward: new_rewards.0,
 				actions: actions_copy.0,
 				gamestate: state,
+				action_mask: action_mask,
 				terminal: win_state != WinState::InProgress
 			};
 			self.game_history.push(sar);

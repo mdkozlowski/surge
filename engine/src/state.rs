@@ -6,6 +6,7 @@ use std::{ops};
 use rand::{Rng};
 use rand::rngs::{ThreadRng};
 use std::hash::Hash;
+use std::collections::HashSet;
 
 #[derive(Eq, Hash, PartialEq, Debug, Clone, Copy)]
 pub enum Direction {
@@ -135,8 +136,16 @@ pub struct GameState {
 pub struct SAR {
 	pub(crate) gamestate: GameState,
 	pub(crate) actions: Action,
+	pub(crate) action_mask: HashSet<Action>,
 	pub(crate) reward: f32,
 	pub(crate) terminal: bool
+}
+
+#[derive(Debug, Clone)]
+pub struct MatchReplay {
+	pub sars: Vec<SAR>,
+	pub agent_ids: (i32, i32),
+	pub p1_won: bool
 }
 
 impl BoardState {

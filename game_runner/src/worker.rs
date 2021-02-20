@@ -12,7 +12,7 @@ use tch::{CModule, Tensor};
 use tch::nn::Module;
 
 use engine::engine::Engine;
-use engine::state::{Action, Direction, FruitType, WinState, SAR, PlayerWinner};
+use engine::state::{Action, Direction, FruitType, WinState, SAR, PlayerWinner, MatchReplay};
 use engine::state::Direction::Up;
 
 use crate::manager::RolloutConfig;
@@ -25,14 +25,14 @@ pub struct RolloutWorker<'a> {
 	engine: Engine,
 	model_store: ModelStore<'a>,
 	matchmaking: MatchmakingPool,
-	sar_store: Vec<SAR>,
-	win_history: Vec<(usize, usize, bool)>,
+	match_history: Vec<MatchReplay>,
+	sar_store: Vec<SAR>
 }
 
 pub struct ModelStore<'a> {
 	pub root_path: &'a Path,
-	pub model_ids: Vec<usize>,
-	pub models_hash: HashMap<usize, CModule>,
+	pub model_ids: Vec<i32>,
+	pub models_hash: HashMap<i32, CModule>,
 }
 
 pub enum PlayerIdx {
@@ -41,9 +41,9 @@ pub enum PlayerIdx {
 }
 
 impl<'a> ModelStore<'a> {
-	pub fn new(path: &'a str, model_ids: Vec<usize>) -> Self {
+	pub fn new(path: &'a str, model_ids: Vec<i32>) -> Self {
 		let root_path = &Path::new(path);
-		let mut models_hash = HashMap::<usize, CModule>::new();
+		let mut models_hash = HashMap::<i32, CModule>::new();
 		for id in &model_ids {
 			let current = format!("{}.pt", id.to_string().as_str());
 			let model_path = root_path.join(&Path::new(current.as_str()));
@@ -79,8 +79,8 @@ impl<'a> RolloutWorker<'a> {
 			conf,
 			engine,
 			model_store,
-			win_history: Vec::new(),
-			sar_store: Vec::new(),
+			match_history: Vec::new(),
+			sar_store: Vec::new()
 		}
 	}
 
@@ -109,19 +109,18 @@ impl<'a> RolloutWorker<'a> {
 		let duration = start.elapsed();
 
 		println!("Time elapsed in expensive_function() is: {:?}", duration);
-		self.sar_store.append(&mut self.engine.game_history);
-		self.win_history.push((agent_ids.0, agent_ids.1, winstate == WinState::Finished(PlayerWinner::Player1)))
+		// self.sar_store.append(&mut self.engine.game_history);
+		// self.win_history.push((agent_ids.0, agent_ids.1, winstate == WinState::Finished(PlayerWinner::Player1)))
 	}
 
 	pub fn play_match_ai(self: &mut Self) {
-		let player_id = self.matchmaking.target_id;
+		let player_id = self.matchmaking.target_id.clone();
 		let mut opponent = RandomPlayer::new();
 
-		let start = Instant::now();
 		self.reset();
 		while self.engine.current_state.match_status == WinState::InProgress {
 			let state = self.get_state_vec_view(PlayerIdx::Player1);
-			let player_action = self.run_model(player_id, state.0, state.1, self.conf.evaluation_mode);
+			let player_action = self.run_model(player_id.clone(), state.0, state.1, self.conf.evaluation_mode);
 			let opponent_action = opponent.get_move(&self.engine.current_state);
 			self.engine.apply_move((player_action, opponent_action), Some(-0.1f32));
 
@@ -130,15 +129,24 @@ impl<'a> RolloutWorker<'a> {
 			}
 		}
 		let winstate = self.engine.current_state.match_status;
-		println!("{:?}", winstate);
-		let duration = start.elapsed();
 
-		println!("Time elapsed in expensive_function() is: {:?}", duration);
+		let match_replay = MatchReplay {
+			sars: self.engine.game_history.clone(),
+			agent_ids: (player_id, 69420),
+			p1_won: winstate == WinState::Finished(PlayerWinner::Player1)
+		};
+		self.match_history.push(match_replay);
 		self.sar_store.append(&mut self.engine.game_history);
-		self.win_history.push((player_id, 0, winstate == WinState::Finished(PlayerWinner::Player1)))
 	}
 
-	pub fn run_model(self: &Self, model_idx: usize, state_vec: Vec<f32>, action_mask: Vec<f32>,
+	pub fn play_matches(self: &mut Self) -> Vec<MatchReplay> {
+		while self.sar_store.len() < self.conf.max_sars as usize {
+			self.play_match_ai();
+		}
+		self.match_history.clone()
+	}
+
+	pub fn run_model(self: &Self, model_idx: i32, state_vec: Vec<f32>, action_mask: Vec<f32>,
 					 evaluation_mode: bool) -> Action {
 		let state_tensor = Tensor::of_slice(&state_vec);
 		let mut action_vector = Tensor::of_slice(&action_mask);
@@ -149,7 +157,6 @@ impl<'a> RolloutWorker<'a> {
 		let action_idx = if evaluation_mode {
 			i32::from(pred.argmax(0, false))
 		} else {
-			pred.softmax(0, tch::Kind::Float).print();
 			i32::from(pred.softmax(0, tch::Kind::Float).multinomial(1, true))
 		};
 
@@ -293,13 +300,13 @@ impl<'a> RolloutWorker<'a> {
 }
 
 pub struct MatchmakingPool {
-	target_id: usize,
-	opponent_ids: Vec<usize>,
+	target_id: i32,
+	opponent_ids: Vec<i32>,
 	rng: ThreadRng,
 }
 
 impl MatchmakingPool {
-	pub fn new(target: usize, opponents: Vec<usize>) -> Self {
+	pub fn new(target: i32, opponents: Vec<i32>) -> Self {
 		let mut thread_rng = ThreadRng::default();
 		Self {
 			target_id: target,
@@ -308,8 +315,8 @@ impl MatchmakingPool {
 		}
 	}
 
-	pub fn sample_pair(self: &mut Self) -> (usize, usize) {
+	pub fn sample_pair(self: &mut Self) -> (i32, i32) {
 		let opponent = self.opponent_ids.choose(&mut self.rng).unwrap();
-		(self.target_id, *opponent)
+		(self.target_id.clone(), opponent.clone())
 	}
 }
