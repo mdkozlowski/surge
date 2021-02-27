@@ -1,5 +1,5 @@
 use engine::state::{GameState, Action, Direction};
-use rand::seq::SliceRandom;
+use rand::seq::{SliceRandom, IteratorRandom};
 use rand::rngs::ThreadRng;
 use rand::thread_rng;
 
@@ -21,10 +21,15 @@ impl RandomPlayer {
 
 impl AiPlayer for RandomPlayer {
 	fn get_move(self: &mut Self, current_state: &GameState) -> Action {
-		let action = [Action::Move(Direction::Up),
-			Action::Move(Direction::Down),
-			Action::Move(Direction::Left),
-			Action::Move(Direction::Right)];
-		*action.choose(&mut self.rng).unwrap()
+		let available_actions = current_state
+			.get_valid_moves(&current_state.player2);
+		let available_actions_iter = available_actions
+			.iter()
+			.collect::<Vec<&Action>>();
+		// let action = [Action::Move(Direction::Up),
+		// 	Action::Move(Direction::Down),
+		// 	Action::Move(Direction::Left),
+		// 	Action::Move(Direction::Right)];
+		**available_actions_iter.choose(&mut self.rng).unwrap()
 	}
 }

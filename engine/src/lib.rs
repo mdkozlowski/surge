@@ -61,30 +61,12 @@ pub mod engine {
 			}
 		}
 
-		pub fn get_valid_moves(self: &Self, player: &Player) -> HashSet<Action> {
-			let outside_bounds = |board_size, val| {
-				val >= board_size || val < 0
-			};
-			let mut valid_moves: HashSet<Action> = HashSet::new();
-			valid_moves.insert(Action::DoNothing);
-
-			for direction in vec![Direction::Up, Direction::Down, Direction::Left, Direction::Right] {
-				let target_pos = direction.as_pos() + player.position;
-				if !outside_bounds(self.current_state.board.size, target_pos.x)
-					&& !outside_bounds(self.current_state.board.size, target_pos.y) {
-					valid_moves.insert(Action::Move(direction));
-				}
-			}
-			valid_moves
-		}
-
-		fn outside_bounds(board_size: i8, pos: &Position) -> bool {
-			return (pos.x < 0 || pos.x >= board_size) || (pos.y < 0 || pos.y >= board_size);
-		}
-
 		pub fn apply_move(&mut self, actions: (Action, Action), reward_added: Option<f32>) -> WinState {
 			let state = self.current_state.clone();
 			let actions_copy = actions.clone();
+
+			self.current_state.player1.reward = 0.0f32;
+			self.current_state.player2.reward = 0.0f32;
 
 			self.resolve_actions(actions);
 			self.current_state.round += 1;
@@ -110,7 +92,7 @@ pub mod engine {
 				}
 			}
 
-			let action_mask = self.get_valid_moves(&self.current_state.player1);
+			let action_mask = self.current_state.get_valid_moves(&self.current_state.player1);
 			let new_rewards = Engine::make_reward_zerosum(
 				self.current_state.player1.reward, self.current_state.player2.reward);
 			let sar: SAR = SAR {
@@ -190,11 +172,11 @@ pub mod engine {
 			let mut p1_target = Engine::resolve_move(actions.0, &self.current_state.player1.position);
 			let mut p2_target = Engine::resolve_move(actions.1, &self.current_state.player2.position);
 
-			if Engine::outside_bounds(self.current_state.board.size, &p1_target) {
+			if GameState::outside_bounds(self.current_state.board.size, &p1_target) {
 				p1_target = self.current_state.player1.position.clone();
 			}
 
-			if Engine::outside_bounds(self.current_state.board.size, &p2_target) {
+			if GameState::outside_bounds(self.current_state.board.size, &p2_target) {
 				p2_target = self.current_state.player2.position.clone();
 			}
 

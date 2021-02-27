@@ -17,7 +17,7 @@ message RunnerConfig {
   repeated int32 agent_ids = 2;
   int32 max_rounds = 3;
   bool evaluation_mode = 4;
-  int32 max_sars = 5;
+  int32 max_matches = 5;
 }
 
 message MatchesResponse {

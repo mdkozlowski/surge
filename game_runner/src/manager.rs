@@ -11,7 +11,7 @@ pub struct RolloutConfig {
 	pub agent_ids: (i32, Vec<i32>),
 	pub max_rounds: u32,
 	pub evaluation_mode: bool,
-	pub max_sars: u32
+	pub max_matches: u32
 }
 
 pub struct RolloutManager<'a>  {

@@ -1,19 +1,22 @@
 #![allow(dead_code)]
 
-use std::{collections::{HashMap}, convert::TryFrom};
-use std::{ops};
-
-use rand::{Rng};
-use rand::rngs::{ThreadRng};
-use std::hash::Hash;
+use std::{collections::HashMap, convert::TryFrom};
+use std::ops;
 use std::collections::HashSet;
+use std::hash::Hash;
+use std::iter::FromIterator;
+
+use ndarray::Array;
+use num_traits::Pow;
+use rand::Rng;
+use rand::rngs::ThreadRng;
 
 #[derive(Eq, Hash, PartialEq, Debug, Clone, Copy)]
 pub enum Direction {
-	Up,
-	Down,
-	Left,
-	Right,
+	Up = 0,
+	Down = 1,
+	Left = 2,
+	Right = 3,
 }
 
 #[derive(Eq, Hash, PartialEq, Debug, Clone, Copy)]
@@ -54,6 +57,17 @@ impl ops::Add<Position> for Position {
 pub enum Action {
 	Move(Direction),
 	DoNothing,
+}
+
+impl Action {
+	pub fn as_num(a: Action) -> i32 {
+		match a {
+			Action::Move(dir) => {
+				dir as i32
+			}
+			_ => { 0 }
+		}
+	}
 }
 
 // #[derive(PartialEq)]
@@ -134,11 +148,11 @@ pub struct GameState {
 
 #[derive(Debug, Clone)]
 pub struct SAR {
-	pub(crate) gamestate: GameState,
-	pub(crate) actions: Action,
-	pub(crate) action_mask: HashSet<Action>,
-	pub(crate) reward: f32,
-	pub(crate) terminal: bool
+	pub gamestate: GameState,
+	pub actions: Action,
+	pub action_mask: HashSet<Action>,
+	pub reward: f32,
+	pub terminal: bool
 }
 
 #[derive(Debug, Clone)]
@@ -243,4 +257,153 @@ impl GameState {
 		println!("{:?}", self.board.fruit_counts);
 		println!("===================")
 	}
+
+	pub fn get_valid_moves(self: &Self, player: &Player) -> HashSet<Action> {
+		let outside_bounds = |board_size, val| {
+			val >= board_size || val < 0
+		};
+		let mut valid_moves: HashSet<Action> = HashSet::new();
+		// valid_moves.insert(Action::DoNothing);
+
+		for direction in vec![Direction::Up, Direction::Down, Direction::Left, Direction::Right] {
+			let target_pos = direction.as_pos() + player.position;
+			if !outside_bounds(self.board.size, target_pos.x)
+				&& !outside_bounds(self.board.size, target_pos.y) {
+				valid_moves.insert(Action::Move(direction));
+			}
+		}
+		valid_moves
+	}
+
+	pub fn outside_bounds(board_size: i8, pos: &Position) -> bool {
+		return (pos.x < 0 || pos.x >= board_size) || (pos.y < 0 || pos.y >= board_size);
+	}
+
+	pub fn get_state_vec_view(current_state: &GameState, idx: PlayerIdx) -> (Vec<f32>, Vec<f32>) {
+		let action_mask = match idx {
+			PlayerIdx::Player1 => {
+				current_state.get_valid_moves(&current_state.player1)
+			}
+			PlayerIdx::Player2 => {
+				current_state.get_valid_moves(&current_state.player2)
+			}
+		};
+		let mut action_mask_array = Array::ones((4));
+		for item in action_mask {
+			match item {
+				Action::Move(dir) => {
+					match dir {
+						Direction::Up => {
+							action_mask_array[0] = 0.0f32;
+						}
+						Direction::Down => {
+							action_mask_array[1] = 0.0f32;
+						}
+						Direction::Left => {
+							action_mask_array[2] = 0.0f32;
+						}
+						Direction::Right => {
+							action_mask_array[3] = 0.0f32;
+						}
+					}
+				}
+				_ => {}
+			}
+		}
+		let action_mask_vec = Array::from_iter(action_mask_array.iter().cloned()).to_vec();
+
+		let mut map = Array::zeros((10, 10, 3));
+
+		let fruit_map = &current_state.board.fruit_map;
+		for (idx, item) in fruit_map.indexed_iter() {
+			match *item {
+				Some(fruit) => {
+					match fruit {
+						FruitType::Apple => {
+							map[[idx.0, idx.1, 0]] = 1.0f32;
+						}
+						FruitType::Banana => {
+							map[[idx.0, idx.1, 1]] = 1.0f32;
+						}
+						FruitType::Orange => {
+							map[[idx.0, idx.1, 2]] = 1.0f32;
+						}
+					}
+				}
+				None => {}
+			}
+		}
+		let player1 = &current_state.player1;
+		let player2 = &current_state.player2;
+		let mut map_vec: Vec<f32> = Array::from_iter(map.iter().cloned()).to_vec();
+
+		let mut own_info_vec: Vec<f32> = Vec::new();
+		let mut their_info_vec: Vec<f32> = Vec::new();
+		let mut relative_info_vec: Vec<f32> = Vec::new();
+		let euclidean_dist = |x1: f32, x2: f32, y1: f32, y2: f32| -> f32 {
+			(((x1 - x2).pow(2) + (y1 - y2).pow(2)) as f32).sqrt() / 100.0f32
+		};
+		let manhattan_dist = |x1: f32, x2: f32, y1: f32, y2: f32| -> f32 {
+			((x1 - x2).abs() + (y1 - y2) as f32).abs() / 100.0f32
+		};
+		let bearing_calc = |x1: f32, x2: f32, y1: f32, y2: f32| -> f32 {
+			((y1 - y2).atan2(x1 - x2) + std::f32::consts::PI) / (2.0f32 * std::f32::consts::PI)
+		};
+
+		match idx {
+			PlayerIdx::Player1 => {
+				own_info_vec.push(*player1.fruit_counts.get(&FruitType::Apple).unwrap());
+				own_info_vec.push(*player1.fruit_counts.get(&FruitType::Banana).unwrap());
+				own_info_vec.push(*player1.fruit_counts.get(&FruitType::Orange).unwrap());
+				own_info_vec.push(player1.position.x as f32 / 10.0f32);
+				own_info_vec.push(player1.position.y as f32 / 10.0f32);
+
+				their_info_vec.push(*player2.fruit_counts.get(&FruitType::Apple).unwrap());
+				their_info_vec.push(*player2.fruit_counts.get(&FruitType::Banana).unwrap());
+				their_info_vec.push(*player2.fruit_counts.get(&FruitType::Orange).unwrap());
+				their_info_vec.push(player2.position.x as f32 / 10.0f32);
+				their_info_vec.push(player2.position.y as f32 / 10.0f32);
+
+				let euclidean_distance: f32 = euclidean_dist(player1.position.x as f32, player2.position.x as f32, player1.position.y as f32, player2.position.y as f32);
+				let manhattan_distance: f32 = manhattan_dist(player1.position.x as f32, player2.position.x as f32, player1.position.y as f32, player2.position.y as f32);
+				let bearing = bearing_calc(player1.position.x as f32, player2.position.x as f32, player1.position.y as f32, player2.position.y as f32);
+				relative_info_vec.push(euclidean_distance);
+				relative_info_vec.push(manhattan_distance);
+				relative_info_vec.push(bearing.sin());
+				relative_info_vec.push(bearing.cos());
+			}
+			PlayerIdx::Player2 => {
+				own_info_vec.push(*player2.fruit_counts.get(&FruitType::Apple).unwrap());
+				own_info_vec.push(*player2.fruit_counts.get(&FruitType::Banana).unwrap());
+				own_info_vec.push(*player2.fruit_counts.get(&FruitType::Orange).unwrap());
+				own_info_vec.push(player2.position.x as f32 / 10.0f32);
+				own_info_vec.push(player2.position.y as f32 / 10.0f32);
+
+				their_info_vec.push(*player1.fruit_counts.get(&FruitType::Apple).unwrap());
+				their_info_vec.push(*player1.fruit_counts.get(&FruitType::Banana).unwrap());
+				their_info_vec.push(*player1.fruit_counts.get(&FruitType::Orange).unwrap());
+				their_info_vec.push(player1.position.x as f32 / 10.0f32);
+				their_info_vec.push(player1.position.y as f32 / 10.0f32);
+
+				let euclidean_distance: f32 = euclidean_dist(player2.position.x as f32, player1.position.x as f32, player2.position.y as f32, player1.position.y as f32);
+				let manhattan_distance: f32 = manhattan_dist(player2.position.x as f32, player1.position.x as f32, player2.position.y as f32, player1.position.y as f32);
+				let bearing = bearing_calc(player2.position.x as f32, player1.position.x as f32, player2.position.y as f32, player1.position.y as f32);
+				relative_info_vec.push(euclidean_distance);
+				relative_info_vec.push(manhattan_distance);
+				relative_info_vec.push(bearing.sin());
+				relative_info_vec.push(bearing.cos());
+			}
+		}
+
+		map_vec.append(&mut own_info_vec);
+		map_vec.append(&mut their_info_vec);
+		map_vec.append(&mut relative_info_vec);
+
+		(map_vec, action_mask_vec)
+	}
+}
+
+pub enum PlayerIdx {
+	Player1,
+	Player2,
 }
